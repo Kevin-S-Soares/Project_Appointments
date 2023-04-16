@@ -4,7 +4,7 @@ namespace Project_Appointments.Models.Attributes
 {
     public class BreakTimeValidationAttribute : ValidationAttribute
     {
-        private BreakTime model = default!;
+        private BreakTime _model = default!;
         public override bool IsValid(object? value)
         {
             if(value is not BreakTime)
@@ -12,7 +12,7 @@ namespace Project_Appointments.Models.Attributes
                 ErrorMessage = "Invalid BreakTime";
                 return false;
             }
-            model = (BreakTime) value;
+            _model = (BreakTime) value;
             return ArePropertiesValid();
         }
 
@@ -25,7 +25,7 @@ namespace Project_Appointments.Models.Attributes
 
         private bool IsIdValid()
         {
-            bool condition = model.Id >= 0L;
+            bool condition = _model.Id >= 0L;
             if(condition is false)
             {
                 ErrorMessage = "Invalid BreakTime.Id";
@@ -35,7 +35,7 @@ namespace Project_Appointments.Models.Attributes
 
         private bool IsScheduleIdValid()
         {
-            bool condition = model.ScheduleId >= 0L;
+            bool condition = _model.ScheduleId >= 0L;
             if (condition is false)
             {
                 ErrorMessage = "Invalid BreakTime.ScheduleId";
@@ -45,7 +45,7 @@ namespace Project_Appointments.Models.Attributes
 
         private bool AreTimesValid()
         {
-            bool condition = model.StartTime < model.EndTime;
+            bool condition = _model.StartTime < _model.EndTime;
             if (condition is false)
             {
                 ErrorMessage = "Invalid BreakTime.StartTime or BreakTime.EndTime";

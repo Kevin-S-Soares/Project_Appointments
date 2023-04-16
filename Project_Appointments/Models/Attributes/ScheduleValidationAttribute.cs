@@ -4,7 +4,7 @@ namespace Project_Appointments.Models.Attributes
 {
     public class ScheduleValidationAttribute : ValidationAttribute
     {
-        private Schedule model = default!;
+        private Schedule _model = default!;
         public override bool IsValid(object? value)
         {
             if (value is not Schedule)
@@ -12,7 +12,7 @@ namespace Project_Appointments.Models.Attributes
                 ErrorMessage = "Invalid Schedule";
                 return false;
             }
-            model = (Schedule) value;
+            _model = (Schedule) value;
             return ArePropertiesValid();
         }
 
@@ -26,7 +26,7 @@ namespace Project_Appointments.Models.Attributes
 
         private bool IsIdValid()
         {
-            bool condition = model.Id >= 0L;
+            bool condition = _model.Id >= 0L;
             if (condition is false)
             {
                 ErrorMessage = "Invalid Schedule.Id";
@@ -36,7 +36,7 @@ namespace Project_Appointments.Models.Attributes
 
         private bool IsOdontologistIdValid()
         {
-            bool condition = model.OdontologistId >= 0L;
+            bool condition = _model.OdontologistId >= 0L;
             if (condition is false)
             {
                 ErrorMessage = "Invalid Schedule.OdontologistId";
@@ -46,7 +46,7 @@ namespace Project_Appointments.Models.Attributes
 
         private bool IsDayValid()
         {
-            int aux = Convert.ToInt32(model.Day);
+            int aux = Convert.ToInt32(_model.Day);
             bool condition = aux >= 0 && aux <= 6;
             if(condition is false)
             {
@@ -57,7 +57,7 @@ namespace Project_Appointments.Models.Attributes
 
         private bool AreTimesValid()
         {
-            bool condition = model.StartTime < model.EndTime;
+            bool condition = _model.StartTime < _model.EndTime;
             if(condition is false)
             {
                 ErrorMessage = "Invalid Schedule.StartTime or Schedule.EndTime";
