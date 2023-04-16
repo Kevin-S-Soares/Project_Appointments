@@ -19,8 +19,7 @@ namespace Project_Appointments.Models.Attributes
         private bool ArePropertiesValid()
         {
             return IsIdValid()
-                && IsScheduleIdValid()
-                && AreTimesValid();
+                && IsScheduleIdValid();
         }
 
         private bool IsIdValid()
@@ -39,16 +38,6 @@ namespace Project_Appointments.Models.Attributes
             if (condition is false)
             {
                 ErrorMessage = "Invalid BreakTime.ScheduleId";
-            }
-            return condition;
-        }
-
-        private bool AreTimesValid()
-        {
-            bool condition = _model.StartTime < _model.EndTime;
-            if (condition is false)
-            {
-                ErrorMessage = "Invalid BreakTime.StartTime or BreakTime.EndTime";
             }
             return condition;
         }

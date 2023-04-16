@@ -25,7 +25,6 @@ namespace Project_Appointments.Models.Attributes
         {
             return IsIdValid()
                 && IsScheduleIdValid()
-                && AreTimesValid()
                 && IsPatientNameValid();
         }
 
@@ -45,16 +44,6 @@ namespace Project_Appointments.Models.Attributes
             if (condition is false)
             {
                 ErrorMessage = "Invalid Appointment.ScheduleId";
-            }
-            return condition;
-        }
-
-        private bool AreTimesValid()
-        {
-            bool condition = _model.StartTime < _model.EndTime;
-            if(condition is false)
-            {
-                ErrorMessage = "Invalid Appointment.StartTime or Appointment.EndTime";
             }
             return condition;
         }

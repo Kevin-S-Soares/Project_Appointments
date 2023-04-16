@@ -3,25 +3,21 @@
 namespace Project_Appointments.Models
 {
     [AppointmentValidation]
-    public class Appointment
+    public class Appointment : ITimeRepresentation
     {
         public long Id { get; set; }
         public long ScheduleId { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
         public string PatientName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
-        public bool IsPartiallyInserted(Appointment other)
-        {
-            return (other.StartTime <= StartTime && other.EndTime >= StartTime)
-                || (other.StartTime <= EndTime && other.EndTime >= EndTime);
-        }
+        public DayOfWeek StartDay { get => Start.DayOfWeek; }
 
-        public bool IsCompletelyInserted(Appointment other)
-        {
-            return (other.StartTime <= StartTime && other.EndTime >= StartTime)
-                && (other.StartTime <= EndTime && other.EndTime >= EndTime);
-        }
+        public DayOfWeek EndDay { get => End.DayOfWeek; }
+
+        public TimeSpan StartTime { get => Start.TimeOfDay; }
+
+        public TimeSpan EndTime { get => End.TimeOfDay; }
     }
 }
