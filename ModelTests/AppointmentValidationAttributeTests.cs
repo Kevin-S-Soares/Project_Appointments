@@ -2,7 +2,6 @@
 using Project_Appointments.Models;
 using Project_Appointments.Models.Attributes;
 using System;
-using System.Data.Common;
 
 namespace ModelTests
 {

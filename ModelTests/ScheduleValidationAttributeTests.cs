@@ -11,12 +11,12 @@ namespace ModelTests
         private ScheduleValidationAttribute _validation = default!;
 
         [TestInitialize]
-        public void Setup() 
+        public void Setup()
         {
             _validation = new();
         }
 
-        private readonly Schedule _input_0 = new() 
+        private readonly Schedule _input_0 = new()
         {
             Id = 1L,
             OdontologistId = 1L,
@@ -91,7 +91,7 @@ namespace ModelTests
         {
             Id = 1L,
             OdontologistId = 1L,
-            StartDay = (DayOfWeek) (-1),
+            StartDay = (DayOfWeek)(-1),
             EndDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(9, 0, 0),
             EndTime = new TimeSpan(18, 0, 0)
@@ -112,7 +112,7 @@ namespace ModelTests
             Id = 1L,
             OdontologistId = 1L,
             StartDay = DayOfWeek.Monday,
-            EndDay = (DayOfWeek) (7),
+            EndDay = (DayOfWeek)(7),
             StartTime = new TimeSpan(9, 0, 0),
             EndTime = new TimeSpan(18, 0, 0)
         };

@@ -89,7 +89,7 @@ namespace ModelTests
         {
             Id = 1L,
             ScheduleId = 1L,
-            StartDay = (DayOfWeek) (-1),
+            StartDay = (DayOfWeek)(-1),
             EndDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(12, 0, 0),
             EndTime = new TimeSpan(13, 0, 0)
@@ -110,7 +110,7 @@ namespace ModelTests
             Id = 1L,
             ScheduleId = 1L,
             StartDay = DayOfWeek.Monday,
-            EndDay = (DayOfWeek) (7),
+            EndDay = (DayOfWeek)(7),
             StartTime = new TimeSpan(12, 0, 0),
             EndTime = new TimeSpan(13, 0, 0)
         };

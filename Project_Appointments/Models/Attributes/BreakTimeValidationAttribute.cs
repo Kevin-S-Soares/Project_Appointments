@@ -7,12 +7,12 @@ namespace Project_Appointments.Models.Attributes
         private BreakTime _model = default!;
         public override bool IsValid(object? value)
         {
-            if(value is not BreakTime)
+            if (value is not BreakTime)
             {
                 ErrorMessage = "Invalid BreakTime";
                 return false;
             }
-            _model = (BreakTime) value;
+            _model = (BreakTime)value;
             return ArePropertiesValid();
         }
 
@@ -27,7 +27,7 @@ namespace Project_Appointments.Models.Attributes
         private bool IsIdValid()
         {
             bool condition = _model.Id >= 0L;
-            if(condition is false)
+            if (condition is false)
             {
                 ErrorMessage = "Invalid BreakTime.Id";
             }

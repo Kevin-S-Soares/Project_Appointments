@@ -12,12 +12,12 @@ namespace Project_Appointments.Models.Attributes
 
         public override bool IsValid(object? value)
         {
-            if(value is not Appointment)
+            if (value is not Appointment)
             {
                 ErrorMessage = "Invalid Appointment";
                 return false;
             }
-            _model = (Appointment) value;
+            _model = (Appointment)value;
             return ArePropertiesValid();
         }
 
@@ -31,7 +31,7 @@ namespace Project_Appointments.Models.Attributes
         private bool IsIdValid()
         {
             bool condition = _model.Id >= 0L;
-            if(condition is false)
+            if (condition is false)
             {
                 ErrorMessage = "Invalid Appointment.Id";
             }
@@ -54,7 +54,7 @@ namespace Project_Appointments.Models.Attributes
                 Regex.IsMatch(input: _model.PatientName, pattern: s_regexName,
                     options: RegexOptions.None, matchTimeout: s_timeout);
 
-            if(condition is false)
+            if (condition is false)
             {
                 ErrorMessage = "Invalid Appointment.PatientName";
             }

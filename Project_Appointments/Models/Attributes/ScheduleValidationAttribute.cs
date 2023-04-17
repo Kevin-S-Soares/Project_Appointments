@@ -12,7 +12,7 @@ namespace Project_Appointments.Models.Attributes
                 ErrorMessage = "Invalid Schedule";
                 return false;
             }
-            _model = (Schedule) value;
+            _model = (Schedule)value;
             return ArePropertiesValid();
         }
 
