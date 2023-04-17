@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Models.Exceptions;
+using Project_Appointments.Models.Services;
 
 namespace Project_Appointments.Controllers
 {
@@ -8,60 +9,73 @@ namespace Project_Appointments.Controllers
     public class OdontologistController : ControllerBase
     {
 
-        private readonly ApplicationContext _context;
+        private readonly OdontologistService _service;
 
-        public OdontologistController(ApplicationContext context)
+        public OdontologistController(OdontologistService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
         public IEnumerable<Odontologist> Get()
         {
-            return _context.Odontologists.ToList();
+            return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Odontologist>> Get(long id)
+        public ActionResult<Odontologist> Get(long id)
         {
-            Odontologist? result = await _context.Odontologists.FindAsync(id);
-            if (result is null)
+            Odontologist result;
+            try
             {
-                return BadRequest("Odontologist not found");
+                result = _service.FindById(id);
+            }
+            catch (ServiceException e)
+            {
+                return BadRequest(e.Message);
             }
             return result;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Odontologist odontologist)
+        public ActionResult Post(Odontologist odontologist)
         {
-            _context.Odontologists.Add(odontologist);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _service.Add(odontologist);
+            }
+            catch (ServiceException e)
+            {
+                return BadRequest(e.Message);
+            }
             return CreatedAtAction(nameof(Get), new { id = odontologist.Id }, odontologist);
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(Odontologist odontologist)
+        public ActionResult Put(Odontologist odontologist)
         {
-            Odontologist? result = await _context.Odontologists.FindAsync(odontologist.Id);
-            if (result is null)
+            try
             {
-                return BadRequest("Odontologist not found");
+                _service.Update(odontologist);
             }
-            await _context.SaveChangesAsync();
+            catch (ServiceException e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(long id)
+        public ActionResult Delete(long id)
         {
-            Odontologist? result = await _context.Odontologists.FindAsync(id);
-            if (result is null)
+            try
             {
-                return BadRequest("Odontologist not found");
+                _service.Delete(id);
             }
-            _context.Odontologists.Remove(result);
-            await _context.SaveChangesAsync();
+            catch (ServiceException e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
     }
