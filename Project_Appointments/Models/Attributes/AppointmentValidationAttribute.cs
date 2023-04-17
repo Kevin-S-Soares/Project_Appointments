@@ -56,7 +56,7 @@ namespace Project_Appointments.Models.Attributes
 
             if(condition is false)
             {
-                ErrorMessage = "Invalid Schedule.PatientName";
+                ErrorMessage = "Invalid Appointment.PatientName";
             }
             return condition;
         }

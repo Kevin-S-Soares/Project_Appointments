@@ -19,7 +19,9 @@ namespace Project_Appointments.Models.Attributes
         private bool ArePropertiesValid()
         {
             return IsIdValid()
-                && IsScheduleIdValid();
+                && IsScheduleIdValid()
+                && IsStartDayValid()
+                && IsEndDayValid();
         }
 
         private bool IsIdValid()
@@ -38,6 +40,28 @@ namespace Project_Appointments.Models.Attributes
             if (condition is false)
             {
                 ErrorMessage = "Invalid BreakTime.ScheduleId";
+            }
+            return condition;
+        }
+
+        private bool IsStartDayValid()
+        {
+            int aux = Convert.ToInt32(_model.StartDay);
+            bool condition = aux >= 0 && aux <= 6;
+            if (condition is false)
+            {
+                ErrorMessage = "Invalid BreakTime.StartDay";
+            }
+            return condition;
+        }
+
+        private bool IsEndDayValid()
+        {
+            int aux = Convert.ToInt32(_model.EndDay);
+            bool condition = aux >= 0 && aux <= 6;
+            if (condition is false)
+            {
+                ErrorMessage = "Invalid BreakTime.EndDay";
             }
             return condition;
         }

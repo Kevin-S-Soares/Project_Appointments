@@ -19,7 +19,9 @@ namespace Project_Appointments.Models.Attributes
         private bool ArePropertiesValid()
         {
             return IsIdValid()
-                && IsOdontologistIdValid();
+                && IsOdontologistIdValid()
+                && IsStartDayValid()
+                && IsEndDayValid();
         }
 
         private bool IsIdValid()
@@ -38,6 +40,28 @@ namespace Project_Appointments.Models.Attributes
             if (condition is false)
             {
                 ErrorMessage = "Invalid Schedule.OdontologistId";
+            }
+            return condition;
+        }
+
+        private bool IsStartDayValid()
+        {
+            int aux = Convert.ToInt32(_model.StartDay);
+            bool condition = aux >= 0 && aux <= 6;
+            if (condition is false)
+            {
+                ErrorMessage = "Invalid Schedule.StartDay";
+            }
+            return condition;
+        }
+
+        private bool IsEndDayValid()
+        {
+            int aux = Convert.ToInt32(_model.EndDay);
+            bool condition = aux >= 0 && aux <= 6;
+            if (condition is false)
+            {
+                ErrorMessage = "Invalid Schedule.EndDay";
             }
             return condition;
         }
