@@ -3,23 +3,23 @@
     public class TimeRepresentation
     {
         public static bool IsPartiallyInserted(
-            ITimeRepresentation segment1, ITimeRepresentation segment2)
+            ITimeRepresentation contained, ITimeRepresentation contains)
         {
             return
-                GetStartTimeTicks(segment2) <= GetStartTimeTicks(segment1)
-                && GetEndTimeTicks(segment2) >= GetStartTimeTicks(segment1)
-                || GetStartTimeTicks(segment2) <= GetEndTimeTicks(segment1)
-                && GetEndTimeTicks(segment2) >= GetEndTimeTicks(segment1);
+                GetStartTimeTicks(contains) <= GetStartTimeTicks(contained)
+                && GetEndTimeTicks(contains) >= GetStartTimeTicks(contained)
+                || GetStartTimeTicks(contains) <= GetEndTimeTicks(contained)
+                && GetEndTimeTicks(contains) >= GetEndTimeTicks(contained);
         }
 
         public bool IsCompletelyInserted(
-            ITimeRepresentation segment1, ITimeRepresentation segment2)
+            ITimeRepresentation contained, ITimeRepresentation contains)
         {
             return
-                GetStartTimeTicks(segment2) <= GetStartTimeTicks(segment1)
-                && GetEndTimeTicks(segment2) >= GetStartTimeTicks(segment1)
-                && GetStartTimeTicks(segment2) <= GetEndTimeTicks(segment1)
-                && GetEndTimeTicks(segment2) >= GetEndTimeTicks(segment1);
+                GetStartTimeTicks(contains) <= GetStartTimeTicks(contained)
+                && GetEndTimeTicks(contains) >= GetStartTimeTicks(contained)
+                && GetStartTimeTicks(contains) <= GetEndTimeTicks(contained)
+                && GetEndTimeTicks(contains) >= GetEndTimeTicks(contained);
         }
 
         private static long GetStartTimeTicks(ITimeRepresentation obj)
