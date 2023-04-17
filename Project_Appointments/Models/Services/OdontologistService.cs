@@ -34,6 +34,10 @@ namespace Project_Appointments.Models.Services
                 _context.Odontologists.Update(odontologist);
                 _context.SaveChanges();
             }
+            catch (ServiceException)
+            {
+                throw new ServiceException("Exception deleting odontologist: Odontologist not found");
+            }
             catch (Exception e)
             {
                 throw new ServiceException("Exception updating odontologist: " + e.Message);
@@ -47,6 +51,10 @@ namespace Project_Appointments.Models.Services
                 Odontologist result = FindById(id);
                 _context.Odontologists.Remove(result);
                 _context.SaveChanges();
+            }
+            catch (ServiceException)
+            {
+                throw new ServiceException("Exception deleting odontologist: Odontologist not found");
             }
             catch (Exception e)
             {
