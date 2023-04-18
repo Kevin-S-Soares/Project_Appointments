@@ -16,6 +16,7 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<ApplicationContext>(x => x.UseSqlServer());
         builder.Services.AddTransient<OdontologistService>();
+        builder.Services.AddTransient<ScheduleService>();
 
         var app = builder.Build();
 

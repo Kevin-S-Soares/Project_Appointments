@@ -1,66 +1,80 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Models.Services;
 
 namespace Project_Appointments.Controllers
 {
     [ApiController, Route("api/[controller]")]
     public class ScheduleController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly ScheduleService _service;
 
-        public ScheduleController(ApplicationContext context)
+        public ScheduleController(ScheduleService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
         public IEnumerable<Schedule> Get()
         {
-            return _context.Schedules.ToList();
+            return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Schedule>> Get(long id)
+        public ActionResult<Schedule> Get(long id)
         {
-            Schedule? result = await _context.Schedules.FindAsync(id);
-            if (result is null)
+            Schedule result;
+            try
             {
-                return BadRequest("Schedule not found");
+                 result = _service.FindById(id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
             return result;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Schedule schedule)
+        public ActionResult Post(Schedule schedule)
         {
-            _context.Schedules.Add(schedule);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _service.Add(schedule);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return CreatedAtAction(nameof(Get), new { id = schedule.Id }, schedule);
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(Schedule schedule)
+        public ActionResult Put(Schedule schedule)
         {
-            Schedule? result = await _context.Schedules.FindAsync(schedule.Id);
-            if (result is null)
+            try
             {
-                return BadRequest("Schedule not found");
+                _service.Update(schedule);
             }
-            await _context.SaveChangesAsync();
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(long id)
+        public ActionResult Delete(long id)
         {
-            Schedule? result = await _context.Schedules.FindAsync(id);
-            if (result is null)
+            try
             {
-                return BadRequest("Schedule not found");
+                _service.Delete(id);
             }
-            _context.Schedules.Remove(result);
-            await _context.SaveChangesAsync();
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
     }
