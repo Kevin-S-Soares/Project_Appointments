@@ -35,7 +35,7 @@ namespace Project_Appointments.Models.Services
             try
             {
                 Schedule result = FindById(schedule.Id);
-                _validator.Update(result);
+                _validator.Update(schedule);
                 _context.Schedules.Update(schedule);
                 _context.SaveChanges();
             }
