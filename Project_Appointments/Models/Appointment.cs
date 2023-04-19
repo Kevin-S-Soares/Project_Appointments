@@ -19,5 +19,16 @@ namespace Project_Appointments.Models
         public TimeSpan StartTime { get => Start.TimeOfDay; }
 
         public TimeSpan EndTime { get => End.TimeOfDay; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Appointment appointment &&
+                   Id == appointment.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
     }
 }

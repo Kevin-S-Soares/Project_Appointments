@@ -11,5 +11,16 @@ namespace Project_Appointments.Models
         public TimeSpan StartTime { get; set; }
         public DayOfWeek EndDay { get; set; }
         public TimeSpan EndTime { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is BreakTime time &&
+                   Id == time.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
     }
 }
