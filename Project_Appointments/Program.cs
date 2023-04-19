@@ -17,6 +17,7 @@ public class Program
         builder.Services.AddDbContext<ApplicationContext>(x => x.UseSqlServer());
         builder.Services.AddTransient<OdontologistService>();
         builder.Services.AddTransient<ScheduleService>();
+        builder.Services.AddTransient<BreakTimeService>();
 
         var app = builder.Build();
 

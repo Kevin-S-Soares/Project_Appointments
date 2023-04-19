@@ -1,66 +1,80 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Models.Services;
 
 namespace Project_Appointments.Controllers
 {
     [ApiController, Route("api/[controller]")]
     public class BreakTimeController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly BreakTimeService _service;
 
-        public BreakTimeController(ApplicationContext context)
+        public BreakTimeController(BreakTimeService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
         public IEnumerable<BreakTime> Get()
         {
-            return _context.BreakTimes.ToList();
+            return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BreakTime>> Get(long id)
+        public ActionResult<BreakTime> Get(long id)
         {
-            BreakTime? result = await _context.BreakTimes.FindAsync(id);
-            if (result is null)
+            BreakTime result;
+            try
             {
-                return BadRequest("BreakTime not found");
+                result = _service.FindById(id);
+            }
+            catch (Exception e) 
+            {
+                return BadRequest(e.Message);
             }
             return result;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(BreakTime breakTime)
+        public ActionResult Post(BreakTime breakTime)
         {
-            _context.BreakTimes.Add(breakTime);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _service.Add(breakTime);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return CreatedAtAction(nameof(Get), new { id = breakTime.Id }, breakTime);
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(BreakTime breakTime)
+        public ActionResult Put(BreakTime breakTime)
         {
-            BreakTime? result = await _context.BreakTimes.FindAsync(breakTime.Id);
-            if (result is null)
+            try
             {
-                return BadRequest("BreakTime not found");
+                _service.Update(breakTime);
             }
-            await _context.SaveChangesAsync();
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(long id)
+        public ActionResult Delete(long id)
         {
-            BreakTime? result = await _context.BreakTimes.FindAsync(id);
-            if (result is null)
+            try
             {
-                return BadRequest("BreakTime not found");
+                _service.Delete(id);
             }
-            _context.BreakTimes.Remove(result);
-            await _context.SaveChangesAsync();
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
     }
