@@ -98,7 +98,7 @@ namespace ModelTests
         };
 
         [TestMethod]
-        public void AddInvalidSchedule()
+        public void AddInvalidSchedule_0()
         {
             Assert.ThrowsException<ServiceException>(
                 () => _model.Add(_input_2), "Schedule overlaps other schedules");
@@ -155,6 +155,22 @@ namespace ModelTests
                 () => _model.Update(_input_5), "Schedule overlaps other schedules");
         }
 
+        private readonly Schedule _input_6 = new()
+        {
+            Id = 3L,
+            OdontologistId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(8, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(19, 0, 0),
+        };
+
+        [TestMethod]
+        public void AddInvalidSchedule_1()
+        {
+            Assert.ThrowsException<ServiceException>(
+                () => _model.Add(_input_6), "Schedule overlaps other schedules");
+        }
 
     }
 }

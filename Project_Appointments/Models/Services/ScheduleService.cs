@@ -16,7 +16,7 @@ namespace Project_Appointments.Models.Services
         }
 
         public Schedule Add(Schedule schedule)
-        {      
+        {
             try
             {
                 _validator.Add(schedule);

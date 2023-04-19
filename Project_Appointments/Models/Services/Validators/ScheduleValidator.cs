@@ -1,14 +1,13 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models.Exceptions;
-using System.Xml.Linq;
 
 namespace Project_Appointments.Models.Services.Validators
 {
     public class ScheduleValidator
     {
         private readonly ApplicationContext _context;
-        public ScheduleValidator(ApplicationContext context) 
-        { 
+        public ScheduleValidator(ApplicationContext context)
+        {
             _context = context;
         }
 
@@ -43,7 +42,11 @@ namespace Project_Appointments.Models.Services.Validators
 
             foreach (var element in structure)
             {
-                bool condition = TimeRepresentation.IsPartiallyInserted(schedule, element);
+                bool condition = TimeRepresentation.IsPartiallyInserted(
+                    contained: schedule, contains: element);
+                condition = condition || TimeRepresentation.IsPartiallyInserted(
+                    contained: element, contains: schedule);
+
                 if (condition is true)
                 {
                     return true;

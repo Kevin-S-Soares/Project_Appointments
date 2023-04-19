@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Models.Services;
 
@@ -27,7 +26,7 @@ namespace Project_Appointments.Controllers
             Schedule result;
             try
             {
-                 result = _service.FindById(id);
+                result = _service.FindById(id);
             }
             catch (Exception e)
             {
@@ -57,7 +56,7 @@ namespace Project_Appointments.Controllers
             {
                 _service.Update(schedule);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
