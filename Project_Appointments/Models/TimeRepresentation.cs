@@ -5,21 +5,37 @@
         public static bool IsPartiallyInserted(
             ITimeRepresentation contained, ITimeRepresentation contains)
         {
-            return
-                GetStartTimeTicks(contains) <= GetStartTimeTicks(contained)
-                && GetEndTimeTicks(contains) >= GetStartTimeTicks(contained)
-                || GetStartTimeTicks(contains) <= GetEndTimeTicks(contained)
-                && GetEndTimeTicks(contains) >= GetEndTimeTicks(contained);
+            long startTicksContains, endTicksContains, startTicksContained, endTicksContained;
+            startTicksContains = GetStartTimeTicks(contains);
+            endTicksContains = GetEndTimeTicks(contains);
+            startTicksContained = GetStartTimeTicks(contained);
+            endTicksContained = GetEndTimeTicks(contained);
+
+            bool condition1 = startTicksContains <= startTicksContained
+                && endTicksContains >= startTicksContained;
+
+            bool condition2 = startTicksContains <= endTicksContained
+                && endTicksContains >= endTicksContained;
+
+            return condition1 || condition2;
         }
 
         public static bool IsCompletelyInserted(
             ITimeRepresentation contained, ITimeRepresentation contains)
         {
-            return
-                GetStartTimeTicks(contains) <= GetStartTimeTicks(contained)
-                && GetEndTimeTicks(contains) >= GetStartTimeTicks(contained)
-                && GetStartTimeTicks(contains) <= GetEndTimeTicks(contained)
-                && GetEndTimeTicks(contains) >= GetEndTimeTicks(contained);
+            long startTicksContains, endTicksContains, startTicksContained, endTicksContained;
+            startTicksContains = GetStartTimeTicks(contains);
+            endTicksContains = GetEndTimeTicks(contains);
+            startTicksContained = GetStartTimeTicks(contained);
+            endTicksContained = GetEndTimeTicks(contained);
+
+            bool condition1 = startTicksContains <= startTicksContained
+                && endTicksContains >= startTicksContained;
+
+            bool condition2 = startTicksContains <= endTicksContained
+                && endTicksContains >= endTicksContained;
+
+            return condition1 && condition2;
         }
 
         private static long GetStartTimeTicks(ITimeRepresentation obj)
