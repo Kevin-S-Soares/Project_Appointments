@@ -13,10 +13,13 @@ namespace Project_Appointments.Models.Services.Validators
 
         public void Add(Schedule schedule)
         {
-            List<Schedule> schedules = _context.Schedules.ToList();
-            foreach(var obj in schedules)
+            var structure = _context.Schedules
+                .Where(x => x.OdontologistId == schedule.OdontologistId)
+                .ToList();
+
+            foreach(var element in structure)
             {
-                bool condition = TimeRepresentation.IsPartiallyInserted(schedule, obj);
+                bool condition = TimeRepresentation.IsPartiallyInserted(schedule, element);
                 if(condition is true)
                 {
                     throw new ModelException("Schedule overlaps other schedules");
@@ -26,11 +29,14 @@ namespace Project_Appointments.Models.Services.Validators
 
         public void Update(Schedule schedule)
         {
-            List<Schedule> schedules = _context.Schedules.ToList();
-            schedules.Remove(schedule);
-            foreach (var obj in schedules)
+            var structure = _context.Schedules
+                .Where(x => x.OdontologistId == schedule.OdontologistId)
+                .ToList();
+
+            structure.Remove(schedule);
+            foreach (var element in structure)
             {
-                bool condition = TimeRepresentation.IsPartiallyInserted(schedule, obj);
+                bool condition = TimeRepresentation.IsPartiallyInserted(schedule, element);
                 if (condition is true)
                 {
                     throw new ModelException("Schedule overlaps other schedules");

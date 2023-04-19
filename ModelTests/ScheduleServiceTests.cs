@@ -64,13 +64,30 @@ namespace ModelTests
         };
 
         [TestMethod]
-        public void AddValidSchedule()
+        public void AddValidSchedule_0()
         {
             _model.Add(_input_0);
             Assert.IsTrue(true);
         }
 
         private readonly Schedule _input_1 = new()
+        {
+            Id = 3L,
+            OdontologistId = 2L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(9, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(18, 0, 0),
+        };
+
+        [TestMethod]
+        public void AddValidSchedule_1()
+        {
+            _model.Add(_input_1);
+            Assert.IsTrue(true);
+        }
+
+        private readonly Schedule _input_2 = new()
         {
             Id = 3L,
             OdontologistId = 1L,
@@ -84,10 +101,10 @@ namespace ModelTests
         public void AddInvalidSchedule()
         {
             Assert.ThrowsException<ServiceException>(
-                () => _model.Add(_input_1), "Schedule overlaps other schedules");
+                () => _model.Add(_input_2), "Schedule overlaps other schedules");
         }
 
-        private readonly Schedule _input_2 = new()
+        private readonly Schedule _input_3 = new()
         {
             Id = 2L,
             OdontologistId = 1L,
@@ -98,13 +115,30 @@ namespace ModelTests
         };
 
         [TestMethod]
-        public void UpdateValidSchedule()
+        public void UpdateValidSchedule_0()
         {
-            _model.Update(_input_2);
+            _model.Update(_input_3);
             Assert.IsTrue(true);
         }
 
-        private readonly Schedule _input_3 = new()
+        private readonly Schedule _input_4 = new()
+        {
+            Id = 2L,
+            OdontologistId = 1L,
+            StartDay = DayOfWeek.Tuesday,
+            StartTime = new TimeSpan(9, 0, 0),
+            EndDay = DayOfWeek.Tuesday,
+            EndTime = new TimeSpan(18, 0, 0),
+        };
+
+        [TestMethod]
+        public void UpdateValidSchedule_1()
+        {
+            _model.Update(_input_4);
+            Assert.IsTrue(true);
+        }
+
+        private readonly Schedule _input_5 = new()
         {
             Id = 1L,
             OdontologistId = 1L,
@@ -118,7 +152,7 @@ namespace ModelTests
         public void UpdateInvalidSchedule()
         {
             Assert.ThrowsException<ServiceException>(
-                () => _model.Update(_input_3), "Schedule overlaps other schedules");
+                () => _model.Update(_input_5), "Schedule overlaps other schedules");
         }
 
 
