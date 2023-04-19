@@ -12,7 +12,7 @@
                 && GetEndTimeTicks(contains) >= GetEndTimeTicks(contained);
         }
 
-        public bool IsCompletelyInserted(
+        public static bool IsCompletelyInserted(
             ITimeRepresentation contained, ITimeRepresentation contains)
         {
             return
