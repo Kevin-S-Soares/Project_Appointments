@@ -5,14 +5,14 @@ namespace Project_Appointments.Contexts
 {
     public class ApplicationContext : DbContext
     {
-        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
-        {
-        }
+        public ApplicationContext() { }
+        public ApplicationContext(DbContextOptions<ApplicationContext> options)
+            : base(options) { }
 
-        public DbSet<Odontologist> Odontologists { get; set; } = default!;
-        public DbSet<Appointment> Appointments { get; set; } = default!;
-        public DbSet<Schedule> Schedules { get; set; } = default!;
-        public DbSet<BreakTime> BreakTimes { get; set; } = default!;
+        public virtual DbSet<Odontologist> Odontologists { get; set; } = default!;
+        public virtual DbSet<Appointment> Appointments { get; set; } = default!;
+        public virtual DbSet<Schedule> Schedules { get; set; } = default!;
+        public virtual DbSet<BreakTime> BreakTimes { get; set; } = default!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
