@@ -8,19 +8,19 @@ namespace Project_Appointments.Models.Services.Validators
         private readonly ApplicationContext _context;
         public BreakTimeValidator(ApplicationContext context)
         {
-            _context = context; 
+            _context = context;
         }
 
         public void Add(BreakTime breakTime)
         {
             bool condition = IsWithinSchedule(breakTime);
-            if(condition is false)
+            if (condition is false)
             {
                 throw new ModelException("BreakTime is not within its referred schedule");
             }
 
             condition = IsWithinOtherBreakTimes(breakTime);
-            if(condition is true)
+            if (condition is true)
             {
                 throw new ModelException("BreakTime overlaps other breakTimes");
             }
@@ -50,7 +50,7 @@ namespace Project_Appointments.Models.Services.Validators
                     .Where(x => x.Id == breakTime.ScheduleId)
                     .First();
             }
-            catch (ArgumentNullException)
+            catch (Exception)
             {
                 throw new ModelException("Invalid referred schedule");
             }
@@ -69,12 +69,13 @@ namespace Project_Appointments.Models.Services.Validators
                 structure.Remove(breakTime);
             }
 
-            foreach(var element in structure)
+            foreach (var element in structure)
             {
                 bool condition = TimeRepresentation.IsPartiallyInserted(
                     contained: breakTime, contains: element);
-
-                if(condition is true)
+                condition = condition || TimeRepresentation.IsPartiallyInserted(
+                    contained: element, contains: breakTime);
+                if (condition is true)
                 {
                     return true;
                 }
