@@ -16,7 +16,7 @@ namespace ModelTests
     {
         private ScheduleService _model = default!;
 
-        private readonly IQueryable<Schedule> _data = new List<Schedule>()
+        private readonly IQueryable<Schedule> _dataSchedule = new List<Schedule>()
         {
             new()
             {
@@ -38,17 +38,50 @@ namespace ModelTests
             }
         }.AsQueryable();
 
+        private readonly IQueryable<Odontologist> _dataOdontologist = new List<Odontologist>()
+        {
+            new()
+            {
+                Id = 1L,
+                Name = "Test Test",
+                Email = "test@test.com",
+                Phone = "(011) 91111-1111"
+            },
+            new()
+            {
+                Id = 2L,
+                Name = "Test Test",
+                Email = "test@test.com",
+                Phone = "(011) 91111-1111"
+            }
+        }.AsQueryable();
+
         [TestInitialize]
         public void Setup()
         {
             var mockSet = new Mock<DbSet<Schedule>>();
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.Provider).Returns(_data.Provider);
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.Expression).Returns(_data.Expression);
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.ElementType).Returns(_data.ElementType);
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.GetEnumerator()).Returns(_data.GetEnumerator());
+            mockSet.As<IQueryable<Schedule>>().Setup(x => x.Provider)
+                .Returns(_dataSchedule.Provider);
+            mockSet.As<IQueryable<Schedule>>().Setup(x => x.Expression)
+                .Returns(_dataSchedule.Expression);
+            mockSet.As<IQueryable<Schedule>>().Setup(x => x.ElementType)
+                .Returns(_dataSchedule.ElementType);
+            mockSet.As<IQueryable<Schedule>>().Setup(x => x.GetEnumerator())
+                .Returns(_dataSchedule.GetEnumerator());
+
+            var mockOdontologist = new Mock<DbSet<Odontologist>>();
+            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.Provider)
+                .Returns(_dataOdontologist.Provider);
+            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.Expression)
+                .Returns(_dataOdontologist.Expression);
+            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.ElementType)
+                .Returns(_dataOdontologist.ElementType);
+            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.GetEnumerator())
+                .Returns(_dataOdontologist.GetEnumerator());
 
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(x => x.Schedules).Returns(mockSet.Object);
+            mockContext.Setup(x => x.Odontologists).Returns(mockOdontologist.Object);
 
             _model = new(mockContext.Object);
         }
