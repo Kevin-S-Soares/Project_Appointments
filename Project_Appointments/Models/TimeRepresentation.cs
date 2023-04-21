@@ -38,6 +38,42 @@
             return condition1 && condition2;
         }
 
+        public static bool IsAppointmentPartiallyInserted(
+    Appointment contained, Appointment contains)
+        {
+            long startTicksContains, endTicksContains, startTicksContained, endTicksContained;
+            startTicksContains = contains.Start.Ticks;
+            endTicksContains = contains.End.Ticks;
+            startTicksContained = contained.Start.Ticks;
+            endTicksContained = contained.End.Ticks;
+
+            bool condition1 = startTicksContains <= startTicksContained
+                && endTicksContains >= startTicksContained;
+
+            bool condition2 = startTicksContains <= endTicksContained
+                && endTicksContains >= endTicksContained;
+
+            return condition1 || condition2;
+        }
+
+        public static bool IsAppointmentCompletelyInserted(
+            Appointment contained, Appointment contains)
+        {
+            long startTicksContains, endTicksContains, startTicksContained, endTicksContained;
+            startTicksContains = contains.Start.Ticks;
+            endTicksContains = contains.End.Ticks;
+            startTicksContained = contained.Start.Ticks;
+            endTicksContained = contained.End.Ticks;
+
+            bool condition1 = startTicksContains <= startTicksContained
+                && endTicksContains >= startTicksContained;
+
+            bool condition2 = startTicksContains <= endTicksContained
+                && endTicksContains >= endTicksContained;
+
+            return condition1 && condition2;
+        }
+
         private static long GetStartTimeTicks(ITimeRepresentation obj)
         {
             return Convert.ToInt64(obj.StartDay) * TimeSpan.TicksPerDay + obj.StartTime.Ticks;
