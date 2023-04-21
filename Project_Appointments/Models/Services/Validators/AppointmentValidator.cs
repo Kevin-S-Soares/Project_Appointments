@@ -72,7 +72,7 @@ namespace Project_Appointments.Models.Services.Validators
                     contained: appointment, contains: element);
                 condition = condition || TimeRepresentation.IsPartiallyInserted(
                     contained: element, contains: appointment);
-                if(condition is true)
+                if (condition is true)
                 {
                     return true;
                 }
@@ -84,7 +84,7 @@ namespace Project_Appointments.Models.Services.Validators
         private bool IsAppointmentWithinOtherAppointments(Appointment appointment, bool isToUpdate = false)
         {
             var structure = GetAppointments(appointment);
-            
+
             if (isToUpdate)
             {
                 structure.Remove(appointment);
