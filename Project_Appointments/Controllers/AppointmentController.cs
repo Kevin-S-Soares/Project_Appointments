@@ -1,66 +1,79 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Models.Services;
 
 namespace Project_Appointments.Controllers
 {
     [ApiController, Route("api/[controller]")]
     public class AppointmentController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly AppointmentService _service;
 
-        public AppointmentController(ApplicationContext context)
+        public AppointmentController(AppointmentService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
         public IEnumerable<Appointment> Get()
         {
-            return _context.Appointments.ToList();
+            return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Appointment>> Get(long id)
+        public ActionResult<Appointment> Get(long id)
         {
-            Appointment? result = await _context.Appointments.FindAsync(id);
-            if (result is null)
+            Appointment result;
+            try
             {
-                return BadRequest("Appointment not found");
+                result = _service.FindById(id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
             return result;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Appointment appointment)
+        public ActionResult Post(Appointment appointment)
         {
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _service.Add(appointment);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return CreatedAtAction(nameof(Get), new { id = appointment.Id }, appointment);
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(Appointment appointment)
+        public ActionResult Put(Appointment appointment)
         {
-            Appointment? result = await _context.Appointments.FindAsync(appointment.Id);
-            if (result is null)
+            try
             {
-                return BadRequest("Appointment not found");
+                _service.Update(appointment);
             }
-            await _context.SaveChangesAsync();
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(long id)
+        public ActionResult Delete(long id)
         {
-            Appointment? result = await _context.Appointments.FindAsync(id);
-            if (result is null)
+            try
             {
-                return BadRequest("Appointment not found");
+                _service.Delete(id);
             }
-            _context.Appointments.Remove(result);
-            await _context.SaveChangesAsync();
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
     }

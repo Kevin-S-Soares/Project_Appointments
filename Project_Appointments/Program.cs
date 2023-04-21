@@ -18,6 +18,7 @@ public class Program
         builder.Services.AddTransient<OdontologistService>();
         builder.Services.AddTransient<ScheduleService>();
         builder.Services.AddTransient<BreakTimeService>();
+        builder.Services.AddTransient<AppointmentService>();
 
         var app = builder.Build();
 
