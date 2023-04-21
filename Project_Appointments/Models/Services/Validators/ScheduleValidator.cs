@@ -13,26 +13,22 @@ namespace Project_Appointments.Models.Services.Validators
 
         public void Add(Schedule schedule)
         {
-            bool condition = DoesOdontologistExists(schedule);
-            if(condition is false)
-            {
-                throw new ModelException("Invalid referred schedule");
-            }
-            condition = IsWithinOtherSchedule(schedule);
-            if (condition is true)
-            {
-                throw new ModelException("Schedule overlaps other schedules");
-            }
+            BaseMethod(schedule);
         }
 
         public void Update(Schedule schedule)
+        {
+            BaseMethod(schedule, isToUpdate: true);
+        }
+
+        private void BaseMethod(Schedule schedule, bool isToUpdate = false)
         {
             bool condition = DoesOdontologistExists(schedule);
             if (condition is false)
             {
                 throw new ModelException("Invalid referred odontologist");
             }
-            condition = IsWithinOtherSchedule(schedule, isToUpdate: true);
+            condition = IsWithinOtherSchedule(schedule, isToUpdate);
             if (condition is true)
             {
                 throw new ModelException("Schedule overlaps other schedules");
@@ -50,7 +46,7 @@ namespace Project_Appointments.Models.Services.Validators
                 return false;
             }
             return true;
-        } 
+        }
 
         private bool IsWithinOtherSchedule(Schedule schedule, bool isToUpdate = false)
         {

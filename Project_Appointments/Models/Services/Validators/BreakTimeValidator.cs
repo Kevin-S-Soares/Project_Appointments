@@ -13,20 +13,15 @@ namespace Project_Appointments.Models.Services.Validators
 
         public void Add(BreakTime breakTime)
         {
-            bool condition = IsWithinSchedule(breakTime);
-            if (condition is false)
-            {
-                throw new ModelException("BreakTime is not within its referred schedule");
-            }
-
-            condition = IsWithinOtherBreakTimes(breakTime);
-            if (condition is true)
-            {
-                throw new ModelException("BreakTime overlaps other breakTimes");
-            }
+            BaseMethod(breakTime);
         }
 
         public void Update(BreakTime breakTime)
+        {
+            BaseMethod(breakTime, isToUpdate: true);
+        }
+
+        private void BaseMethod(BreakTime breakTime, bool isToUpdate = false)
         {
             bool condition = IsWithinSchedule(breakTime);
             if (condition is false)
@@ -34,7 +29,7 @@ namespace Project_Appointments.Models.Services.Validators
                 throw new ModelException("BreakTime is not within its referred schedule");
             }
 
-            condition = IsWithinOtherBreakTimes(breakTime, isToUpdate: true);
+            condition = IsWithinOtherBreakTimes(breakTime, isToUpdate);
             if (condition is true)
             {
                 throw new ModelException("BreakTime overlaps other breakTimes");
