@@ -1,7 +1,8 @@
 ﻿using Project_Appointments.Contexts;
+using Project_Appointments.Models;
 using Project_Appointments.Models.Exceptions;
 
-namespace Project_Appointments.Models.Services
+namespace Project_Appointments.Services.OdontologistService
 {
     public class OdontologistService
     {

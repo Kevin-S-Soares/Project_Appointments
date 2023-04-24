@@ -4,12 +4,10 @@ using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Models.Exceptions;
-using Project_Appointments.Models.Services;
+using Project_Appointments.Services.AppointmentService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModelTests.Services
 {

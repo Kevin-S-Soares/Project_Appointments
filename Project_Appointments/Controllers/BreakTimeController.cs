@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models;
-using Project_Appointments.Models.Services;
+using Project_Appointments.Services.BreakTimeService;
 
 namespace Project_Appointments.Controllers
 {

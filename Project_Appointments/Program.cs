@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Project_Appointments.Contexts;
-using Project_Appointments.Models.Services;
+using Project_Appointments.Services.AppointmentService;
+using Project_Appointments.Services.BreakTimeService;
+using Project_Appointments.Services.OdontologistService;
+using Project_Appointments.Services.ScheduleService;
 
 public class Program
 {
@@ -15,10 +18,10 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<ApplicationContext>(x => x.UseSqlServer());
-        builder.Services.AddTransient<OdontologistService>();
-        builder.Services.AddTransient<ScheduleService>();
-        builder.Services.AddTransient<BreakTimeService>();
-        builder.Services.AddTransient<AppointmentService>();
+        builder.Services.AddScoped<OdontologistService>();
+        builder.Services.AddScoped<ScheduleService>();
+        builder.Services.AddScoped<BreakTimeService>();
+        builder.Services.AddScoped<AppointmentService>();
 
         var app = builder.Build();
 

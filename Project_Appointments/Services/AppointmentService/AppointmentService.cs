@@ -1,8 +1,8 @@
 ﻿using Project_Appointments.Contexts;
+using Project_Appointments.Models;
 using Project_Appointments.Models.Exceptions;
-using Project_Appointments.Models.Services.Validators;
 
-namespace Project_Appointments.Models.Services
+namespace Project_Appointments.Services.AppointmentService
 {
     public class AppointmentService
     {
