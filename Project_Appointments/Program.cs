@@ -18,7 +18,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<ApplicationContext>(x => x.UseSqlServer());
-        builder.Services.AddScoped<OdontologistService>();
+        builder.Services.AddScoped<IOdontologistService, OdontologistService>();
         builder.Services.AddScoped<ScheduleService>();
         builder.Services.AddScoped<BreakTimeService>();
         builder.Services.AddScoped<AppointmentService>();

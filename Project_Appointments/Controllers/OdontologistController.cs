@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
+using Project_Appointments.Services;
 using Project_Appointments.Services.OdontologistService;
 
 namespace Project_Appointments.Controllers
@@ -9,74 +9,41 @@ namespace Project_Appointments.Controllers
     public class OdontologistController : ControllerBase
     {
 
-        private readonly OdontologistService _service;
+        private readonly IOdontologistService _service;
 
-        public OdontologistController(OdontologistService service)
+        public OdontologistController(IOdontologistService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public IEnumerable<Odontologist> Get()
+        public ActionResult Get()
         {
             return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Odontologist> Get(long id)
+        public ActionResult Get(long id)
         {
-            Odontologist result;
-            try
-            {
-                result = _service.FindById(id);
-            }
-            catch (ServiceException e)
-            {
-                return BadRequest(e.Message);
-            }
-            return result;
+            return _service.FindById(id);
         }
 
         [HttpPost]
-        public ActionResult Post(Odontologist odontologist)
+        public async Task<ActionResult> Post(Odontologist odontologist)
         {
-            try
-            {
-                _service.Add(odontologist);
-            }
-            catch (ServiceException e)
-            {
-                return BadRequest(e.Message);
-            }
-            return CreatedAtAction(nameof(Get), new { id = odontologist.Id }, odontologist);
+            return await _service.CreateAsync(odontologist);
         }
 
         [HttpPut]
-        public ActionResult Put(Odontologist odontologist)
+        public async Task<ActionResult> Put(Odontologist odontologist)
         {
-            try
-            {
-                _service.Update(odontologist);
-            }
-            catch (ServiceException e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.UpdateAsync(odontologist);
         }
 
         [HttpDelete]
-        public ActionResult Delete(long id)
+        public async Task<ActionResult> Delete(long id)
         {
-            try
-            {
-                _service.Delete(id);
-            }
-            catch (ServiceException e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.DeleteAsync(id);
         }
     }
 }
