@@ -7,74 +7,41 @@ namespace Project_Appointments.Controllers
     [ApiController, Route("api/[controller]")]
     public class ScheduleController : ControllerBase
     {
-        private readonly ScheduleService _service;
+        private readonly IScheduleService _service;
 
-        public ScheduleController(ScheduleService service)
+        public ScheduleController(IScheduleService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public IEnumerable<Schedule> Get()
+        public ActionResult Get()
         {
             return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Schedule> Get(long id)
+        public ActionResult Get(long id)
         {
-            Schedule result;
-            try
-            {
-                result = _service.FindById(id);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return result;
+            return _service.FindById(id);
         }
 
         [HttpPost]
-        public ActionResult Post(Schedule schedule)
+        public async Task<ActionResult> Post(Schedule schedule)
         {
-            try
-            {
-                _service.Add(schedule);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return CreatedAtAction(nameof(Get), new { id = schedule.Id }, schedule);
+            return await _service.CreateAsync(schedule);
         }
 
         [HttpPut]
-        public ActionResult Put(Schedule schedule)
+        public async Task<ActionResult> Put(Schedule schedule)
         {
-            try
-            {
-                _service.Update(schedule);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.UpdateAsync(schedule);
         }
 
         [HttpDelete]
-        public ActionResult Delete(long id)
+        public async Task<ActionResult> Delete(long id)
         {
-            try
-            {
-                _service.Delete(id);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.DeleteAsync(id);
         }
     }
 }

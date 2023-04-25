@@ -1,59 +1,58 @@
-﻿using Project_Appointments.Contexts;
-using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
+﻿using Project_Appointments.Models;
+using Project_Appointments.Services.OdontologistService;
 
 namespace Project_Appointments.Services.ScheduleService
 {
     public class ScheduleValidator
     {
-        private readonly ApplicationContext _context;
-        public ScheduleValidator(ApplicationContext context)
+        private readonly IScheduleService _scheduleService;
+        private readonly IOdontologistService _odontologistService;
+        public ScheduleValidator(IScheduleService scheduleService, 
+            IOdontologistService odontologistService)
         {
-            _context = context;
+            _scheduleService = scheduleService;
+            _odontologistService = odontologistService;
         }
 
-        public void Add(Schedule schedule)
+        public Validator Add(Schedule schedule)
         {
-            BaseMethod(schedule);
+            return BaseMethod(schedule);
         }
 
-        public void Update(Schedule schedule)
+        public Validator Update(Schedule schedule)
         {
-            BaseMethod(schedule, isToUpdate: true);
+            return BaseMethod(schedule, isToUpdate: true);
         }
 
-        private void BaseMethod(Schedule schedule, bool isToUpdate = false)
+        private Validator BaseMethod(Schedule schedule, bool isToUpdate = false)
         {
+            var result = new Validator();
             bool condition = DoesOdontologistExists(schedule);
             if (condition is false)
             {
-                throw new ModelException("Invalid referred odontologist");
+                result.ErrorMessage = "Invalid referred odontologist";
+                return result;
             }
             condition = IsWithinOtherSchedule(schedule, isToUpdate);
             if (condition is true)
             {
-                throw new ModelException("Schedule overlaps other schedules");
+                result.ErrorMessage = "Schedule overlaps other schedules";
+                return result;
             }
+            result.IsValid = true;
+            return result;
         }
 
         private bool DoesOdontologistExists(Schedule schedule)
         {
-            try
-            {
-                _context.Odontologists.Where(x => x.Id == schedule.OdontologistId).First();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+            var query = _odontologistService.FindById(schedule.OdontologistId);
+            return query.Value is not null;
         }
 
         private bool IsWithinOtherSchedule(Schedule schedule, bool isToUpdate = false)
         {
-            var structure = _context.Schedules
-                .Where(x => x.OdontologistId == schedule.OdontologistId)
-                .ToList();
+            var structure = (List<Schedule>)
+                _scheduleService.FindAllFromOdontologistId(schedule.OdontologistId).Value!;
 
             if (isToUpdate)
             {
