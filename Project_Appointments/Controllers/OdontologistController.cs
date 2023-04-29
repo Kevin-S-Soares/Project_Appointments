@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models;
-using Project_Appointments.Services;
 using Project_Appointments.Services.OdontologistService;
 
 namespace Project_Appointments.Controllers

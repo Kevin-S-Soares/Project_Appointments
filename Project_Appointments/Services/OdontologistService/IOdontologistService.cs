@@ -4,13 +4,13 @@ namespace Project_Appointments.Services.OdontologistService
 {
     public interface IOdontologistService
     {
-        public ServiceResponse Create(Odontologist odontologist);
-        public Task<ServiceResponse> CreateAsync(Odontologist odontologist);
-        public ServiceResponse FindById(long id);
-        public ServiceResponse FindAll();
-        public ServiceResponse Update(Odontologist odontologist);
-        public Task<ServiceResponse> UpdateAsync(Odontologist odontologist);
-        public ServiceResponse Delete(long id);
-        public Task<ServiceResponse> DeleteAsync(long id);
+        public ServiceResponse<Odontologist> Create(Odontologist odontologist);
+        public Task<ServiceResponse<Odontologist>> CreateAsync(Odontologist odontologist);
+        public ServiceResponse<Odontologist> FindById(long id);
+        public ServiceResponse<IEnumerable<Odontologist>> FindAll();
+        public ServiceResponse<Odontologist> Update(Odontologist odontologist);
+        public Task<ServiceResponse<Odontologist>> UpdateAsync(Odontologist odontologist);
+        public ServiceResponse<string> Delete(long id);
+        public Task<ServiceResponse<string>> DeleteAsync(long id);
     }
 }

@@ -7,7 +7,7 @@ namespace Project_Appointments.Services.ScheduleService
     {
         private readonly IScheduleService _scheduleService;
         private readonly IOdontologistService _odontologistService;
-        public ScheduleValidator(IScheduleService scheduleService, 
+        public ScheduleValidator(IScheduleService scheduleService,
             IOdontologistService odontologistService)
         {
             _scheduleService = scheduleService;
@@ -27,32 +27,35 @@ namespace Project_Appointments.Services.ScheduleService
         private Validator BaseMethod(Schedule schedule, bool isToUpdate = false)
         {
             var result = new Validator();
+
             bool condition = DoesOdontologistExists(schedule);
             if (condition is false)
             {
                 result.ErrorMessage = "Invalid referred odontologist";
                 return result;
             }
+
             condition = IsWithinOtherSchedule(schedule, isToUpdate);
             if (condition is true)
             {
                 result.ErrorMessage = "Schedule overlaps other schedules";
                 return result;
             }
+
             result.IsValid = true;
             return result;
         }
 
         private bool DoesOdontologistExists(Schedule schedule)
         {
-            var query = _odontologistService.FindById(schedule.OdontologistId);
+            var query = _odontologistService.FindById(schedule.Id);
             return query.Value is not null;
         }
 
         private bool IsWithinOtherSchedule(Schedule schedule, bool isToUpdate = false)
         {
-            var structure = (List<Schedule>)
-                _scheduleService.FindAllFromOdontologistId(schedule.OdontologistId).Value!;
+            var structure =
+                _scheduleService.FindAllFromSameOdontologist(schedule).Data!.ToList();
 
             if (isToUpdate)
             {

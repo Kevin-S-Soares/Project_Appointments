@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Project_Appointments.Contexts;
+﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 
 namespace Project_Appointments.Services.OdontologistService
@@ -12,154 +11,135 @@ namespace Project_Appointments.Services.OdontologistService
             _context = context;
         }
 
-        public ServiceResponse Create(Odontologist odontologist)
+        public ServiceResponse<Odontologist> Create(Odontologist odontologist)
         {
-            var result = new ServiceResponse(value: odontologist);
             _context.Odontologists.Add(odontologist);
             try
             {
                 _context.SaveChanges();
-                result.StatusCode = StatusCodes.Status201Created;
-            }
-            catch (Exception e) 
-            {
-                result.StatusCode = StatusCodes.Status500InternalServerError;
-                result.Value = e.Message;
-            }
-            return result;
-        }
-
-        public async Task<ServiceResponse> CreateAsync(Odontologist odontologist)
-        {
-            var result = new ServiceResponse(value: odontologist);
-            try
-            {
-                await _context.Odontologists.AddAsync(odontologist);
-                await _context.SaveChangesAsync();
-                result.StatusCode = StatusCodes.Status201Created;
             }
             catch (Exception e)
             {
-                result.StatusCode = StatusCodes.Status500InternalServerError;
-                result.Value = e.Message;
+                return new(errorMessage: e.Message,
+                    statusCode: StatusCodes.Status500InternalServerError);
             }
-            return result;
+            return new(data: odontologist, statusCode: StatusCodes.Status201Created);
         }
 
-        public ServiceResponse Delete(long id)
+        public async Task<ServiceResponse<Odontologist>> CreateAsync(Odontologist odontologist)
         {
-            var result = new ServiceResponse();
-            var obj = FindById(id).Value;
-            if (obj is null)
+            _context.Odontologists.Add(odontologist);
+            try
             {
-                result.StatusCode = StatusCodes.Status404NotFound;
-                result.Value = "Odontologist does not exist";
-                return result;
+                await _context.SaveChangesAsync();
             }
-            _context.Odontologists.Remove((Odontologist) obj);
+            catch (Exception e)
+            {
+                return new(errorMessage: e.Message,
+                    statusCode: StatusCodes.Status500InternalServerError);
+            }
+            return new(data: odontologist, statusCode: StatusCodes.Status201Created);
+        }
+
+        public ServiceResponse<string> Delete(long id)
+        {
+            var query = _context.Odontologists.FirstOrDefault(x => x.Id == id);
+            if (query is null)
+            {
+                return new(errorMessage: "Odontologist does not exist",
+                    statusCode: StatusCodes.Status404NotFound);
+            }
+            _context.Odontologists.Remove(query);
             try
             {
                 _context.SaveChanges();
-                result.Value = "Odontologist deleted";
             }
             catch (Exception e)
             {
-                result.StatusCode = StatusCodes.Status500InternalServerError;
-                result.Value = e.Message;
+                return new(errorMessage: e.Message,
+                    statusCode: StatusCodes.Status500InternalServerError);
             }
-            return result;
+            return new(data: "Odontologist deleted", statusCode: StatusCodes.Status200OK);
         }
 
-        public async Task<ServiceResponse> DeleteAsync(long id)
+        public async Task<ServiceResponse<string>> DeleteAsync(long id)
         {
-            var result = new ServiceResponse();
-            var obj = FindById(id).Value;
-            if (obj is null)
+            var query = _context.Odontologists.FirstOrDefault(x => x.Id == id);
+            if (query is null)
             {
-                result.StatusCode = StatusCodes.Status404NotFound;
-                result.Value = "Odontologist does not exist";
-                return result;
+                return new(errorMessage: "Odontologist does not exist",
+                    statusCode: StatusCodes.Status404NotFound);
             }
-            _context.Odontologists.Remove((Odontologist) obj);
+            _context.Odontologists.Remove(query);
             try
             {
                 await _context.SaveChangesAsync();
-                result.Value = "Odontologist deleted";
             }
             catch (Exception e)
             {
-                result.StatusCode = StatusCodes.Status500InternalServerError;
-                result.Value = e.Message;
+                return new(errorMessage: e.Message,
+                    statusCode: StatusCodes.Status500InternalServerError);
             }
-            return result;
+            return new(data: "Odontologist deleted", statusCode: StatusCodes.Status200OK);
         }
 
-        public ServiceResponse FindAll()
+        public ServiceResponse<IEnumerable<Odontologist>> FindAll()
         {
-            var result = new ServiceResponse(_context.Odontologists);
-            return result;
+            return new(data: _context.Odontologists,
+                statusCode: StatusCodes.Status200OK);
         }
 
-        public ServiceResponse FindById(long id)
+        public ServiceResponse<Odontologist> FindById(long id)
         {
-            var result = new ServiceResponse();
-            result.Value = _context.Odontologists.FirstOrDefault(x => x.Id == id);
-            if(result.Value is null)
-            {
-                result.StatusCode = StatusCodes.Status404NotFound;
-                result.Value = "Odontologist does not exist";
-            }
-            return result;
-        }
-
-        public ServiceResponse Update(Odontologist odontologist)
-        {
-            var result = new ServiceResponse();
-            var query = _context.Odontologists.FirstOrDefault(x => x.Id == odontologist.Id);
+            var query = _context.Odontologists.FirstOrDefault(x => x.Id == id);
             if (query is null)
             {
-                result.StatusCode = StatusCodes.Status404NotFound;
-                result.Value = "Odontologist does not exist";
-                return result;
+                return new(errorMessage: "Odontologist does not exist",
+                statusCode: StatusCodes.Status404NotFound);
             }
-            _context.Entry(query).State = EntityState.Detached;
+            return new(data: query, statusCode: StatusCodes.Status200OK);
+        }
+
+        public ServiceResponse<Odontologist> Update(Odontologist odontologist)
+        {
+            bool condition = _context.Odontologists.Any(x => x.Id == odontologist.Id);
+            if (condition is false)
+            {
+                return new(errorMessage: "Odontologist does not exist",
+                statusCode: StatusCodes.Status404NotFound);
+            }
             try
             {
                 _context.Odontologists.Update(odontologist);
                 _context.SaveChanges();
-                result.Value = odontologist;
             }
             catch (Exception e)
             {
-                result.StatusCode = StatusCodes.Status500InternalServerError;
-                result.Value = e.Message;
+                return new(errorMessage: e.Message,
+                statusCode: StatusCodes.Status500InternalServerError);
             }
-            return result;
+            return new(data: odontologist, statusCode: StatusCodes.Status200OK);
         }
 
-        public async Task<ServiceResponse> UpdateAsync(Odontologist odontologist)
+        public async Task<ServiceResponse<Odontologist>> UpdateAsync(Odontologist odontologist)
         {
-            var result = new ServiceResponse();
-            var query = _context.Odontologists.FirstOrDefault(x => x.Id == odontologist.Id);
-            if (query is null)
+            bool condition = _context.Odontologists.Any(x => x.Id == odontologist.Id);
+            if (condition is false)
             {
-                result.StatusCode = StatusCodes.Status404NotFound;
-                result.Value = "Odontologist does not exist";
-                return result;
+                return new(errorMessage: "Odontologist does not exist",
+                statusCode: StatusCodes.Status404NotFound);
             }
-            _context.Entry(query).State = EntityState.Detached;
             try
             {
                 _context.Odontologists.Update(odontologist);
                 await _context.SaveChangesAsync();
-                result.Value = odontologist;
             }
             catch (Exception e)
             {
-                result.StatusCode = StatusCodes.Status500InternalServerError;
-                result.Value = e.Message;
+                return new(errorMessage: e.Message,
+                statusCode: StatusCodes.Status500InternalServerError);
             }
-            return result;
+            return new(data: odontologist, statusCode: StatusCodes.Status200OK);
         }
     }
 }
