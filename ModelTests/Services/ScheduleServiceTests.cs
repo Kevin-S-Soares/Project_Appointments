@@ -1,15 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
+using Project_Appointments.Services;
+using Project_Appointments.Services.OdontologistService;
 using Project_Appointments.Services.ScheduleService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ModelTests
+namespace ModelTests.Services
 {
     [TestClass]
     public class ScheduleServiceTests
@@ -38,7 +40,7 @@ namespace ModelTests
             }
         }.AsQueryable();
 
-        private readonly IQueryable<Odontologist> _dataOdontologist = new List<Odontologist>()
+        private readonly List<Odontologist> _dataOdontologist = new()
         {
             new()
             {
@@ -54,7 +56,7 @@ namespace ModelTests
                 Email = "test@test.com",
                 Phone = "(011) 91111-1111"
             }
-        }.AsQueryable();
+        };
 
         [TestInitialize]
         public void Setup()
@@ -69,21 +71,13 @@ namespace ModelTests
             mockSet.As<IQueryable<Schedule>>().Setup(x => x.GetEnumerator())
                 .Returns(_dataSchedule.GetEnumerator());
 
-            var mockOdontologist = new Mock<DbSet<Odontologist>>();
-            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.Provider)
-                .Returns(_dataOdontologist.Provider);
-            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.Expression)
-                .Returns(_dataOdontologist.Expression);
-            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.ElementType)
-                .Returns(_dataOdontologist.ElementType);
-            mockOdontologist.As<IQueryable<Odontologist>>().Setup(x => x.GetEnumerator())
-                .Returns(_dataOdontologist.GetEnumerator());
+            var mockOdontologist = new Mock<IOdontologistService>();
+            mockOdontologist.Setup(x => x.FindById(It.IsAny<long>())).
+                Returns(new ServiceResponse<Odontologist>(_dataOdontologist[0], 200));
 
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(x => x.Schedules).Returns(mockSet.Object);
-            mockContext.Setup(x => x.Odontologists).Returns(mockOdontologist.Object);
-
-            _model = new(mockContext.Object);
+            _model = new(mockContext.Object, mockOdontologist.Object);
         }
 
         private readonly Schedule _input_0 = new()
@@ -97,10 +91,11 @@ namespace ModelTests
         };
 
         [TestMethod]
-        public void AddValidSchedule_0()
+        public void CreateValidSchedule_0()
         {
-            _model.Add(_input_0);
-            Assert.IsTrue(true);
+            var result = _model.Create(_input_0);
+            Assert.AreEqual(expected: StatusCodes.Status201Created,
+                actual: result.StatusCode);
         }
 
         private readonly Schedule _input_1 = new()
@@ -114,10 +109,11 @@ namespace ModelTests
         };
 
         [TestMethod]
-        public void AddValidSchedule_1()
+        public void CreateValidSchedule_1()
         {
-            _model.Add(_input_1);
-            Assert.IsTrue(true);
+            var result = _model.Create(_input_1);
+            Assert.AreEqual(expected: StatusCodes.Status201Created,
+                actual: result.StatusCode);
         }
 
         private readonly Schedule _input_2 = new()
@@ -131,10 +127,13 @@ namespace ModelTests
         };
 
         [TestMethod]
-        public void AddInvalidSchedule_0()
+        public void CreateInvalidSchedule_0()
         {
-            Assert.ThrowsException<ServiceException>(
-                () => _model.Add(_input_2), "Schedule overlaps other schedules");
+            var result = _model.Create(_input_5);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
+            Assert.AreEqual(expected: "Schedule overlaps other schedules",
+                actual: result.ErrorMessage);
         }
 
         private readonly Schedule _input_3 = new()
@@ -150,8 +149,9 @@ namespace ModelTests
         [TestMethod]
         public void UpdateValidSchedule_0()
         {
-            _model.Update(_input_3);
-            Assert.IsTrue(true);
+            var result = _model.Update(_input_3);
+            Assert.AreEqual(expected: StatusCodes.Status200OK,
+                actual: result.StatusCode);
         }
 
         private readonly Schedule _input_4 = new()
@@ -167,8 +167,9 @@ namespace ModelTests
         [TestMethod]
         public void UpdateValidSchedule_1()
         {
-            _model.Update(_input_4);
-            Assert.IsTrue(true);
+            var result = _model.Update(_input_4);
+            Assert.AreEqual(expected: StatusCodes.Status200OK,
+                actual: result.StatusCode);
         }
 
         private readonly Schedule _input_5 = new()
@@ -184,13 +185,16 @@ namespace ModelTests
         [TestMethod]
         public void UpdateInvalidSchedule()
         {
-            Assert.ThrowsException<ServiceException>(
-                () => _model.Update(_input_5), "Schedule overlaps other schedules");
+            var result = _model.Update(_input_5);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
+            Assert.AreEqual(expected: "Schedule overlaps other schedules",
+                actual: result.ErrorMessage);
         }
 
         private readonly Schedule _input_6 = new()
         {
-            Id = 3L,
+            Id = 1L,
             OdontologistId = 1L,
             StartDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(8, 0, 0),
@@ -201,8 +205,11 @@ namespace ModelTests
         [TestMethod]
         public void AddInvalidSchedule_1()
         {
-            Assert.ThrowsException<ServiceException>(
-                () => _model.Add(_input_6), "Schedule overlaps other schedules");
+            var result = _model.Update(_input_5);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
+            Assert.AreEqual(expected: "Schedule overlaps other schedules",
+                actual: result.ErrorMessage);
         }
 
     }
