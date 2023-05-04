@@ -26,24 +26,19 @@ namespace Project_Appointments.Services.ScheduleService
 
         private Validator BaseMethod(Schedule schedule, bool isToUpdate = false)
         {
-            var result = new Validator();
-
             bool condition = DoesOdontologistExists(schedule);
             if (condition is false)
             {
-                result.ErrorMessage = "Invalid referred odontologist";
-                return result;
+                return new("Invalid referred odontologist");
             }
 
             condition = IsWithinOtherSchedule(schedule, isToUpdate);
             if (condition is true)
             {
-                result.ErrorMessage = "Schedule overlaps other schedules";
-                return result;
+                return new("Schedule overlaps other schedules");
             }
 
-            result.IsValid = true;
-            return result;
+            return new(true);
         }
 
         private bool DoesOdontologistExists(Schedule schedule)
