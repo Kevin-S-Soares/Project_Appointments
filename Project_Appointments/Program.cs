@@ -20,7 +20,7 @@ public class Program
         builder.Services.AddDbContext<ApplicationContext>(x => x.UseSqlServer());
         builder.Services.AddScoped<IOdontologistService, OdontologistService>();
         builder.Services.AddScoped<IScheduleService, ScheduleService>();
-        builder.Services.AddScoped<BreakTimeService>();
+        builder.Services.AddScoped<IBreakTimeService, BreakTimeService>();
         builder.Services.AddScoped<AppointmentService>();
 
         var app = builder.Build();

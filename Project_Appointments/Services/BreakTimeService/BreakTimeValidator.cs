@@ -1,64 +1,67 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Models.Exceptions;
+using Project_Appointments.Services.ScheduleService;
 
 namespace Project_Appointments.Services.BreakTimeService
 {
     public class BreakTimeValidator
     {
-        private readonly ApplicationContext _context;
-        public BreakTimeValidator(ApplicationContext context)
+        private readonly IBreakTimeService _breakTimeService;
+        private readonly IScheduleService _scheduleService;
+        public BreakTimeValidator(IBreakTimeService breakTimeService, 
+            IScheduleService scheduleService)
         {
-            _context = context;
+            _breakTimeService = breakTimeService;
+            _scheduleService = scheduleService;
         }
 
-        public void Add(BreakTime breakTime)
+        public Validator Add(BreakTime breakTime)
         {
-            BaseMethod(breakTime);
+            return BaseMethod(breakTime);
         }
 
-        public void Update(BreakTime breakTime)
+        public Validator Update(BreakTime breakTime)
         {
-            BaseMethod(breakTime, isToUpdate: true);
+            return BaseMethod(breakTime, isToUpdate: true);
         }
 
-        private void BaseMethod(BreakTime breakTime, bool isToUpdate = false)
+        private Validator BaseMethod(BreakTime breakTime, bool isToUpdate = false)
         {
-            bool condition = IsWithinSchedule(breakTime);
+            bool condition = DoesScheduleExist(breakTime);
+            if(condition is false)
+            {
+                return new("Invalid referred schedule");
+            }
+            condition = IsWithinSchedule(breakTime);
             if (condition is false)
             {
-                throw new ModelException("BreakTime is not within its referred schedule");
+                return new(errorMessage: "BreakTime is not within its referred schedule");
             }
-
             condition = IsWithinOtherBreakTimes(breakTime, isToUpdate);
             if (condition is true)
             {
-                throw new ModelException("BreakTime overlaps other breakTimes");
+                return new(errorMessage: "BreakTime overlaps other breakTimes");
             }
+            return new(isValid: true);
+        }
+
+        private bool DoesScheduleExist(BreakTime breakTime)
+        {
+            var query = _scheduleService.FindById(breakTime.ScheduleId).Data;
+            return query is not null;
         }
 
         private bool IsWithinSchedule(BreakTime breakTime)
         {
-            Schedule schedule;
-            try
-            {
-                schedule = _context.Schedules
-                    .Where(x => x.Id == breakTime.ScheduleId)
-                    .First();
-            }
-            catch (Exception)
-            {
-                throw new ModelException("Invalid referred schedule");
-            }
+            var schedule = _scheduleService.FindById(breakTime.Id).Data!;
             return TimeRepresentation.IsCompletelyInserted(
                 contained: breakTime, contains: schedule);
         }
 
         private bool IsWithinOtherBreakTimes(BreakTime breakTime, bool isToUpdate = false)
         {
-            var structure = _context.BreakTimes
-                .Where(x => x.ScheduleId == breakTime.ScheduleId)
-                .ToList();
+            var structure = _breakTimeService.FindAllFromSameSchedule(breakTime).Data!.ToList();
 
             if (isToUpdate)
             {

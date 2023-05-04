@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models;
+using Project_Appointments.Services;
 using Project_Appointments.Services.BreakTimeService;
 
 namespace Project_Appointments.Controllers
@@ -7,74 +8,41 @@ namespace Project_Appointments.Controllers
     [ApiController, Route("api/[controller]")]
     public class BreakTimeController : ControllerBase
     {
-        private readonly BreakTimeService _service;
+        private readonly IBreakTimeService _service;
 
-        public BreakTimeController(BreakTimeService service)
+        public BreakTimeController(IBreakTimeService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public IEnumerable<BreakTime> Get()
+        public ServiceResponse<IEnumerable<BreakTime>> Get()
         {
             return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<BreakTime> Get(long id)
+        public ServiceResponse<BreakTime> Get(long id)
         {
-            BreakTime result;
-            try
-            {
-                result = _service.FindById(id);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return result;
+            return _service.FindById(id);
         }
 
         [HttpPost]
-        public ActionResult Post(BreakTime breakTime)
+        public async Task<ServiceResponse<BreakTime>> Post(BreakTime breakTime)
         {
-            try
-            {
-                _service.Add(breakTime);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return CreatedAtAction(nameof(Get), new { id = breakTime.Id }, breakTime);
+            return await _service.CreateAsync(breakTime);
         }
 
         [HttpPut]
-        public ActionResult Put(BreakTime breakTime)
+        public async Task<ServiceResponse<BreakTime>> Put(BreakTime breakTime)
         {
-            try
-            {
-                _service.Update(breakTime);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.UpdateAsync(breakTime);
         }
 
         [HttpDelete]
-        public ActionResult Delete(long id)
+        public async Task<ServiceResponse<string>> Delete(long id)
         {
-            try
-            {
-                _service.Delete(id);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.DeleteAsync(id);
         }
     }
 }
