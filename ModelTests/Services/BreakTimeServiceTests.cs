@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Models.Exceptions;
+using Project_Appointments.Services;
 using Project_Appointments.Services.BreakTimeService;
+using Project_Appointments.Services.ScheduleService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +18,17 @@ namespace ModelTests
     public class BreakTimeServiceTests
     {
         private BreakTimeService _model = default!;
+        private Mock<IScheduleService> _mockScheduleService = default!;
+
+        private readonly Schedule _schedule = new()
+        {
+            Id = 1L,
+            OdontologistId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(9, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(21, 0, 0)
+        };
 
         private readonly IQueryable<BreakTime> _dataBreakTime = new List<BreakTime>()
         {
@@ -26,6 +40,15 @@ namespace ModelTests
                 StartTime = new TimeSpan(12, 0, 0),
                 EndDay = DayOfWeek.Monday,
                 EndTime = new TimeSpan(13, 0, 0)
+            },
+            new()
+            {
+                Id = 2L,
+                ScheduleId = 1L,
+                StartDay = DayOfWeek.Monday,
+                StartTime = new TimeSpan(14, 0, 0),
+                EndDay = DayOfWeek.Monday,
+                EndTime = new TimeSpan(15, 0, 0)
             }
         }.AsQueryable();
 
@@ -38,8 +61,9 @@ namespace ModelTests
                 StartDay = DayOfWeek.Monday,
                 StartTime = new TimeSpan(9, 0, 0),
                 EndDay = DayOfWeek.Monday,
-                EndTime = new TimeSpan(21, 0, 0),
+                EndTime = new TimeSpan(21, 0, 0)
             }
+
         }.AsQueryable();
 
         [TestInitialize]
@@ -70,12 +94,16 @@ namespace ModelTests
             mockContext.Setup(x => x.BreakTimes).Returns(mockBreakTimeSet.Object);
             mockContext.Setup(x => x.Schedules).Returns(mockScheduleSet.Object);
 
-            _model = new(mockContext.Object);
+            _mockScheduleService = new Mock<IScheduleService>();
+            _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
+                .Returns(new ServiceResponse<Schedule>(_schedule, 200));
+
+            _model = new(mockContext.Object, _mockScheduleService.Object);
         }
 
         private readonly BreakTime _input_0 = new()
         {
-            Id = 2L,
+            Id = 3L,
             ScheduleId = 1L,
             StartDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(17, 0, 0),
@@ -86,13 +114,16 @@ namespace ModelTests
         [TestMethod]
         public void AddValidBreakTime()
         {
-            _model.Add(_input_0);
-            Assert.IsTrue(true);
+            var result = _model.Create(_input_0);
+            Assert.AreEqual(expected: _input_0,
+                actual: result.Data);
+            Assert.AreEqual(expected: StatusCodes.Status201Created,
+                actual: result.StatusCode);
         }
 
         private readonly BreakTime _input_1 = new()
         {
-            Id = 2L,
+            Id = 3L,
             ScheduleId = 1L,
             StartDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(11, 0, 0),
@@ -103,13 +134,16 @@ namespace ModelTests
         [TestMethod]
         public void AddInvalidBreakTime_0()
         {
-            Assert.ThrowsException<ServiceException>(() => _model.Add(_input_1),
-                "BreakTime overlaps other breakTimes");
+            var result = _model.Create(_input_1);
+            Assert.AreEqual(expected: "BreakTime overlaps other breakTimes",
+                actual: result.ErrorMessage);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
         }
 
         private readonly BreakTime _input_2 = new()
         {
-            Id = 2L,
+            Id = 3L,
             ScheduleId = 2L,
             StartDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(9, 0, 0),
@@ -120,13 +154,19 @@ namespace ModelTests
         [TestMethod]
         public void AddInvalidBreakTime_1()
         {
-            Assert.ThrowsException<ServiceException>(() => _model.Add(_input_2),
-                "Invalid referred schedule");
+            _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
+                .Returns(new ServiceResponse<Schedule>("BreakTime does not exist", StatusCodes.Status404NotFound));
+
+            var result = _model.Create(_input_2);
+            Assert.AreEqual(expected: "Invalid referred schedule",
+                actual: result.ErrorMessage);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
         }
 
         private readonly BreakTime _input_3 = new()
         {
-            Id = 2L,
+            Id = 3L,
             ScheduleId = 1L,
             StartDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(7, 0, 0),
@@ -137,8 +177,11 @@ namespace ModelTests
         [TestMethod]
         public void AddInvalidBreakTime_2()
         {
-            Assert.ThrowsException<ServiceException>(() => _model.Add(_input_3),
-                "BreakTime is not within its referred schedule");
+            var result = _model.Create(_input_3);
+            Assert.AreEqual(expected: "BreakTime is not within its referred schedule",
+                actual: result.ErrorMessage);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
         }
 
 
@@ -149,14 +192,17 @@ namespace ModelTests
             StartDay = DayOfWeek.Monday,
             StartTime = new TimeSpan(12, 0, 0),
             EndDay = DayOfWeek.Monday,
-            EndTime = new TimeSpan(14, 0, 0)
+            EndTime = new TimeSpan(13, 0, 0)
         };
 
         [TestMethod]
         public void UpdateValidBreakTime()
         {
-            _model.Update(_input_4);
-            Assert.IsTrue(true);
+            var result = _model.Update(_input_4);
+            Assert.AreEqual(expected: _input_4,
+                actual: result.Data);
+            Assert.AreEqual(expected: StatusCodes.Status200OK,
+                actual: result.StatusCode);
         }
 
         private readonly BreakTime _input_5 = new()
@@ -172,8 +218,11 @@ namespace ModelTests
         [TestMethod]
         public void UpdateInvalidBreakTime_0()
         {
-            Assert.ThrowsException<ServiceException>(() => _model.Update(_input_5),
-                "BreakTime overlaps other breakTimes");
+            var result = _model.Update(_input_5);
+            Assert.AreEqual(expected: "BreakTime overlaps other breakTimes", 
+                actual: result.ErrorMessage);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
         }
 
         private readonly BreakTime _input_6 = new()
@@ -189,8 +238,14 @@ namespace ModelTests
         [TestMethod]
         public void UpdateInvalidBreakTime_1()
         {
-            Assert.ThrowsException<ServiceException>(() => _model.Update(_input_6),
-                "Invalid referred schedule");
+            _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
+                .Returns(new ServiceResponse<Schedule>("BreakTime does not exist", StatusCodes.Status404NotFound));
+
+            var result = _model.Update(_input_5);
+            Assert.AreEqual(expected: "Invalid referred schedule",
+                actual: result.ErrorMessage);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
         }
 
         private readonly BreakTime _input_7 = new()
@@ -206,8 +261,11 @@ namespace ModelTests
         [TestMethod]
         public void UpdateInvalidBreakTime_2()
         {
-            Assert.ThrowsException<ServiceException>(() => _model.Update(_input_7),
-                "BreakTime is not within its referred schedule");
+            var result = _model.Update(_input_7);
+            Assert.AreEqual(expected: "BreakTime is not within its referred schedule",
+                actual: result.ErrorMessage);
+            Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
+                actual: result.StatusCode);
         }
     }
 }
