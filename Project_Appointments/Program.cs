@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Project_Appointments.Contexts;
 using Project_Appointments.Services.AppointmentService;
 using Project_Appointments.Services.BreakTimeService;
+using Project_Appointments.Services.EmailService;
 using Project_Appointments.Services.OdontologistService;
 using Project_Appointments.Services.ScheduleService;
+using Project_Appointments.Services.UserService;
 
 public class Program
 {
@@ -22,6 +24,8 @@ public class Program
         builder.Services.AddScoped<IScheduleService, ScheduleService>();
         builder.Services.AddScoped<IBreakTimeService, BreakTimeService>();
         builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
 
         var app = builder.Build();
 
