@@ -1,71 +1,78 @@
-﻿using Project_Appointments.Contexts;
-using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
+﻿using Project_Appointments.Models;
+using Project_Appointments.Services.BreakTimeService;
+using Project_Appointments.Services.ScheduleService;
 
 namespace Project_Appointments.Services.AppointmentService
 {
     public class AppointmentValidator
     {
-        private readonly ApplicationContext _context = default!;
+        private readonly IScheduleService _scheduleService;
+        private readonly IBreakTimeService _breakTimeService;
+        private readonly IAppointmentService _appointmentService;
 
-        public AppointmentValidator(ApplicationContext context)
+        public AppointmentValidator(IScheduleService scheduleService,
+            IBreakTimeService breakTimeService, IAppointmentService appointmentService)
         {
-            _context = context;
+            _scheduleService = scheduleService;
+            _breakTimeService = breakTimeService;
+            _appointmentService = appointmentService;
         }
 
-        public void Add(Appointment appointment)
+        public Validator Add(Appointment appointment)
         {
-            BaseMethod(appointment);
+            return BaseMethod(appointment);
         }
 
-        public void Update(Appointment appointment)
+        public Validator Update(Appointment appointment)
         {
-            BaseMethod(appointment, isToUpdate: true);
+            return BaseMethod(appointment, isToUpdate: true);
         }
 
-        private void BaseMethod(Appointment appointment, bool isToUpdate = false)
+        private Validator BaseMethod(Appointment appointment, bool isToUpdate = false)
         {
-            bool condition = IsAppointmentWithinSchedule(appointment);
+            bool condition = DoesScheduleExist(appointment);
             if (condition is false)
             {
-                throw new ModelException("Appointment is not within its referred schedule");
+                return new("Invalid referred schedule");
+            }
+
+            condition = IsAppointmentWithinSchedule(appointment);
+            if (condition is false)
+            {
+                return new("Appointment is not within its referred schedule");
             }
 
             condition = IsAppointmentWithinBreakTimes(appointment);
             if (condition is true)
             {
-                throw new ModelException("Appointment overlaps breakTimes");
+                return new("Appointment overlaps breakTimes");
             }
 
             condition = IsAppointmentWithinOtherAppointments(appointment, isToUpdate);
             if (condition is true)
             {
-                throw new ModelException("Appointment overlaps other appointments");
+                return new("Appointment overlaps other appointments");
             }
+
+            return new(true);
+        }
+
+        private bool DoesScheduleExist(Appointment appointment)
+        {
+            var query = _scheduleService.FindById(appointment.ScheduleId).Data;
+            return query is not null;
         }
 
         private bool IsAppointmentWithinSchedule(Appointment appointment)
         {
-            Schedule schedule;
-            try
-            {
-                schedule = _context.Schedules
-                    .Where(x => x.Id == appointment.ScheduleId)
-                    .First();
-            }
-            catch (Exception)
-            {
-                throw new ModelException("Invalid referred schedule");
-            }
+            var schedule = _scheduleService.FindById(appointment.ScheduleId).Data!;
             return TimeRepresentation.IsCompletelyInserted(
                 contained: appointment, contains: schedule);
         }
 
         private bool IsAppointmentWithinBreakTimes(Appointment appointment)
         {
-            var structure = _context.BreakTimes
-                .Where(x => x.ScheduleId == appointment.ScheduleId)
-                .ToList();
+            var structure = _breakTimeService.FindAllFromSameSchedule(appointment).Data!;
 
             foreach (var element in structure)
             {
@@ -84,7 +91,8 @@ namespace Project_Appointments.Services.AppointmentService
 
         private bool IsAppointmentWithinOtherAppointments(Appointment appointment, bool isToUpdate = false)
         {
-            var structure = GetAppointments(appointment);
+            var structure = _appointmentService
+                .FindAppointmentsFromSameDay(appointment).Data!.ToList();
 
             if (isToUpdate)
             {
@@ -104,20 +112,6 @@ namespace Project_Appointments.Services.AppointmentService
             }
 
             return false;
-        }
-
-        private List<Appointment> GetAppointments(Appointment appointment)
-        {
-            return
-                _context.Appointments
-                .Where(x => x.ScheduleId == appointment.ScheduleId
-                && ((x.Start.Year == appointment.Start.Year
-                && x.Start.Month == appointment.Start.Month
-                && x.Start.Day == appointment.Start.Day)
-                || (x.End.Year == appointment.End.Year
-                && x.End.Month == appointment.End.Month
-                && x.End.Day == appointment.End.Day)))
-                .ToList();
         }
     }
 }

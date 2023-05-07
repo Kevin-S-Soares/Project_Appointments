@@ -21,7 +21,7 @@ public class Program
         builder.Services.AddScoped<IOdontologistService, OdontologistService>();
         builder.Services.AddScoped<IScheduleService, ScheduleService>();
         builder.Services.AddScoped<IBreakTimeService, BreakTimeService>();
-        builder.Services.AddScoped<AppointmentService>();
+        builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
         var app = builder.Build();
 

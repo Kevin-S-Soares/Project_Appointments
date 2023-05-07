@@ -7,74 +7,41 @@ namespace Project_Appointments.Controllers
     [ApiController, Route("api/[controller]")]
     public class AppointmentController : ControllerBase
     {
-        private readonly AppointmentService _service;
+        private readonly IAppointmentService _service;
 
-        public AppointmentController(AppointmentService service)
+        public AppointmentController(IAppointmentService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public IEnumerable<Appointment> Get()
+        public ActionResult Get()
         {
             return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Appointment> Get(long id)
+        public ActionResult Get(long id)
         {
-            Appointment result;
-            try
-            {
-                result = _service.FindById(id);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return result;
+            return _service.FindById(id);
         }
 
         [HttpPost]
-        public ActionResult Post(Appointment appointment)
+        public async Task<ActionResult> Post(Appointment appointment)
         {
-            try
-            {
-                _service.Add(appointment);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return CreatedAtAction(nameof(Get), new { id = appointment.Id }, appointment);
+            return await _service.CreateAsync(appointment);
         }
 
         [HttpPut]
-        public ActionResult Put(Appointment appointment)
+        public async Task<ActionResult> Put(Appointment appointment)
         {
-            try
-            {
-                _service.Update(appointment);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.UpdateAsync(appointment);
         }
 
         [HttpDelete]
-        public ActionResult Delete(long id)
+        public async Task<ActionResult> Delete(long id)
         {
-            try
-            {
-                _service.Delete(id);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok();
+            return await _service.DeleteAsync(id);
         }
     }
 }
