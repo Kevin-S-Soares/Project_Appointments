@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Update.Internal;
-using Project_Appointments.Models;
+﻿using Project_Appointments.Models;
 
 namespace Project_Appointments.Services.BreakTimeService
 {
@@ -10,6 +9,7 @@ namespace Project_Appointments.Services.BreakTimeService
         public ServiceResponse<BreakTime> FindById(long id);
         public ServiceResponse<IEnumerable<BreakTime>> FindAll();
         public ServiceResponse<IEnumerable<BreakTime>> FindAllFromSameSchedule(BreakTime breakTime);
+        public ServiceResponse<IEnumerable<BreakTime>> FindAllFromSameSchedule(Appointment appointment);
         public ServiceResponse<BreakTime> Update(BreakTime breakTime);
         public Task<ServiceResponse<BreakTime>> UpdateAsync(BreakTime breakTime);
         public ServiceResponse<string> Delete(long id);

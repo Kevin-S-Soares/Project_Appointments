@@ -1,6 +1,4 @@
-﻿using Project_Appointments.Contexts;
-using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
+﻿using Project_Appointments.Models;
 using Project_Appointments.Services.ScheduleService;
 
 namespace Project_Appointments.Services.BreakTimeService
@@ -9,7 +7,7 @@ namespace Project_Appointments.Services.BreakTimeService
     {
         private readonly IBreakTimeService _breakTimeService;
         private readonly IScheduleService _scheduleService;
-        public BreakTimeValidator(IBreakTimeService breakTimeService, 
+        public BreakTimeValidator(IBreakTimeService breakTimeService,
             IScheduleService scheduleService)
         {
             _breakTimeService = breakTimeService;
@@ -29,7 +27,7 @@ namespace Project_Appointments.Services.BreakTimeService
         private Validator BaseMethod(BreakTime breakTime, bool isToUpdate = false)
         {
             bool condition = DoesScheduleExist(breakTime);
-            if(condition is false)
+            if (condition is false)
             {
                 return new("Invalid referred schedule");
             }

@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
 using Project_Appointments.Services;
 using Project_Appointments.Services.BreakTimeService;
 using Project_Appointments.Services.ScheduleService;
@@ -219,7 +218,7 @@ namespace ModelTests
         public void UpdateInvalidBreakTime_0()
         {
             var result = _model.Update(_input_5);
-            Assert.AreEqual(expected: "BreakTime overlaps other breakTimes", 
+            Assert.AreEqual(expected: "BreakTime overlaps other breakTimes",
                 actual: result.ErrorMessage);
             Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
                 actual: result.StatusCode);

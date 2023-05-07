@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models;
-using Project_Appointments.Services;
 using Project_Appointments.Services.BreakTimeService;
 
 namespace Project_Appointments.Controllers
@@ -16,31 +15,31 @@ namespace Project_Appointments.Controllers
         }
 
         [HttpGet]
-        public ServiceResponse<IEnumerable<BreakTime>> Get()
+        public ActionResult Get()
         {
             return _service.FindAll();
         }
 
         [HttpGet("{id}")]
-        public ServiceResponse<BreakTime> Get(long id)
+        public ActionResult Get(long id)
         {
             return _service.FindById(id);
         }
 
         [HttpPost]
-        public async Task<ServiceResponse<BreakTime>> Post(BreakTime breakTime)
+        public async Task<ActionResult> Post(BreakTime breakTime)
         {
             return await _service.CreateAsync(breakTime);
         }
 
         [HttpPut]
-        public async Task<ServiceResponse<BreakTime>> Put(BreakTime breakTime)
+        public async Task<ActionResult> Put(BreakTime breakTime)
         {
             return await _service.UpdateAsync(breakTime);
         }
 
         [HttpDelete]
-        public async Task<ServiceResponse<string>> Delete(long id)
+        public async Task<ActionResult> Delete(long id)
         {
             return await _service.DeleteAsync(id);
         }

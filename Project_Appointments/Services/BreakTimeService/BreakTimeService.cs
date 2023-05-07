@@ -1,6 +1,5 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
 using Project_Appointments.Services.ScheduleService;
 
 namespace Project_Appointments.Services.BreakTimeService
@@ -15,70 +14,11 @@ namespace Project_Appointments.Services.BreakTimeService
             _context = context;
             _validator = new(this, service);
         }
-        /*
-        public BreakTime Add(BreakTime breakTime)
-        {
-            try
-            {
-                _validator.Add(breakTime);
-                _context.BreakTimes.Add(breakTime);
-                _context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                throw new ServiceException("Exception adding breakTime: " + e.Message);
-            }
-            return breakTime;
-        }
-
-        public void Update(BreakTime breakTime)
-        {
-            try
-            {
-                BreakTime result = FindById(breakTime.Id);
-                _validator.Update(breakTime);
-                _context.BreakTimes.Update(breakTime);
-                _context.SaveChanges();
-            }
-            catch (ServiceException)
-            {
-                throw new ServiceException("Exception updating breakTime: BreakTime not found");
-            }
-            catch (Exception e)
-            {
-                throw new ServiceException("Exception updating breakTime: " + e.Message);
-            }
-        }
-
-        public void Delete(long id)
-        {
-            try
-            {
-                BreakTime result = FindById(id);
-                _context.BreakTimes.Remove(result);
-                _context.SaveChanges();
-            }
-            catch (ServiceException)
-            {
-                throw new ServiceException("Exception deleting breakTime: BreakTime not found");
-            }
-            catch (Exception e)
-            {
-                throw new ServiceException("Exception deleting breakTime: " + e.Message);
-            }
-        }
-
-        public BreakTime FindById(long id)
-        {
-            var result = _context.BreakTimes.FirstOrDefault(x => x.Id == id);
-            return result is null ? throw new ServiceException("Exception: BreakTime not found") : result;
-        }
-        */
 
         public ServiceResponse<BreakTime> Create(BreakTime breakTime)
         {
             var validator = _validator.Add(breakTime);
-            if(validator.IsValid is false)
+            if (validator.IsValid is false)
             {
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
@@ -90,7 +30,7 @@ namespace Project_Appointments.Services.BreakTimeService
             }
             catch (Exception e)
             {
-                return new(errorMessage: e.Message, 
+                return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
             return new(data: breakTime, statusCode: StatusCodes.Status201Created);
@@ -120,7 +60,7 @@ namespace Project_Appointments.Services.BreakTimeService
         public ServiceResponse<BreakTime> FindById(long id)
         {
             var result = _context.BreakTimes.FirstOrDefault(x => x.Id == id);
-            if(result is null)
+            if (result is null)
             {
                 return new(errorMessage: "BreakTime does not exist",
                     statusCode: StatusCodes.Status404NotFound);
@@ -136,8 +76,8 @@ namespace Project_Appointments.Services.BreakTimeService
 
         public ServiceResponse<BreakTime> Update(BreakTime breakTime)
         {
-            bool condition = _context.BreakTimes.Any(x=> x.Id == breakTime.Id);
-            if(condition is false)
+            bool condition = _context.BreakTimes.Any(x => x.Id == breakTime.Id);
+            if (condition is false)
             {
                 return new(errorMessage: "BreakTime does not exist",
                     statusCode: StatusCodes.Status404NotFound);
@@ -235,7 +175,14 @@ namespace Project_Appointments.Services.BreakTimeService
             var result = _context.BreakTimes
                 .Where(x => x.ScheduleId == breakTime.ScheduleId && x.Id != breakTime.Id)
                 .ToList();
-            return new (data: result, statusCode: StatusCodes.Status200OK);
+            return new(data: result, statusCode: StatusCodes.Status200OK);
+        }
+
+        public ServiceResponse<IEnumerable<BreakTime>> FindAllFromSameSchedule(Appointment appointment)
+        {
+            var result = _context.BreakTimes
+                .Where(x => x.ScheduleId == appointment.ScheduleId);
+            return new(data: result, statusCode: StatusCodes.Status200OK);
         }
     }
 }

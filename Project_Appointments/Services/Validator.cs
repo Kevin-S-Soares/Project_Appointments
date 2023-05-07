@@ -3,7 +3,7 @@
     public class Validator
     {
         public Validator() { }
-        public Validator(string? errorMessage) 
+        public Validator(string? errorMessage)
         {
             ErrorMessage = errorMessage;
         }
