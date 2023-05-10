@@ -1,0 +1,18 @@
+﻿using Project_Appointments.Models;
+
+namespace Project_Appointments.Services.EmailService
+{
+    public class EmailFactory
+    {
+        public static Email CreateEmailFromNewUser(User user)
+        {
+            return new()
+            {
+                To = "alexzander.jakubowski@ethereal.email",
+                From = "alexzander.jakubowski@ethereal.email",
+                Subject = "Your account has been registered!",
+                Body = user.VerificationToken!
+            };
+        }
+    }
+}
