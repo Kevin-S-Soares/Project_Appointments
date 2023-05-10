@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
-using Project_Appointments.Models.Exceptions;
 using Project_Appointments.Services;
 using Project_Appointments.Services.AppointmentService;
 using Project_Appointments.Services.BreakTimeService;
@@ -135,7 +134,7 @@ namespace ModelTests.Services
         public void AddInvalidAppointment_1()
         {
             var result = _model.Create(_input_2);
-            Assert.AreEqual(expected: "Appointment is not within its referred schedule", 
+            Assert.AreEqual(expected: "Appointment is not within its referred schedule",
                 actual: result.ErrorMessage);
             Assert.AreEqual(expected: 500, actual: result.StatusCode);
         }
