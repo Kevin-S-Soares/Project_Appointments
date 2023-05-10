@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models.Requests;
 using Project_Appointments.Services.UserService;
 
 namespace Project_Appointments.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+
+    [ApiController, Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
@@ -16,10 +15,35 @@ namespace Project_Appointments.Controllers
             _service = service;
         }
 
-        [HttpPost]
-        public async Task<ActionResult> New(UserRegisterRequest userRequest)
+        [HttpPost(nameof(Register))]
+        public async Task<ActionResult> Register(UserRegisterRequest request)
         {
-            return await _service.AddAsync(userRequest);
+            return await _service.RegisterAsync(request);
+        }
+
+
+        [HttpPost(nameof(VerifyToken))]
+        public async Task<ActionResult> VerifyToken(string token)
+        {
+            return await _service.VerifyAsync(token);
+        }
+
+        [HttpPost(nameof(ForgetPassword))]
+        public async Task<ActionResult> ForgetPassword(string email)
+        {
+            return await _service.ForgetPasswordAsync(email);
+        }
+
+        [HttpPost(nameof(ResetPassword))]
+        public async Task<ActionResult> ResetPassword(UserResetPasswordRequest request)
+        {
+            return await _service.ResetPasswordAsync(request);
+        }
+
+        [HttpPost(nameof(Login))]
+        public ActionResult Login(UserLoginRequest request)
+        {
+            return _service.Login(request);
         }
     }
 }
