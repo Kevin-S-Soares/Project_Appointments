@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models;
 using Project_Appointments.Services.OdontologistService;
 
@@ -7,7 +8,6 @@ namespace Project_Appointments.Controllers
     [ApiController, Route("api/[controller]")]
     public class OdontologistController : ControllerBase
     {
-
         private readonly IOdontologistService _service;
 
         public OdontologistController(IOdontologistService service)
