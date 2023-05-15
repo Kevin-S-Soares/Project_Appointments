@@ -5,19 +5,22 @@ using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Services;
+using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.BreakTimeService;
 using Project_Appointments.Services.ScheduleService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace ModelTests
+namespace ModelTests.Services
 {
     [TestClass]
     public class BreakTimeServiceTests
     {
         private BreakTimeService _model = default!;
         private Mock<IScheduleService> _mockScheduleService = default!;
+        private Mock<IAuthService> _authMock = default!;
 
         private readonly Schedule _schedule = new()
         {
@@ -97,7 +100,12 @@ namespace ModelTests
             _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
                 .Returns(new ServiceResponse<Schedule>(_schedule, 200));
 
-            _model = new(mockContext.Object, _mockScheduleService.Object);
+            _authMock = new();
+            _authMock.Setup(x => x.IsAdmin()).Returns(true);
+            _authMock.Setup(x => x.IsOdontologist(It.IsAny<long>())).Returns(false);
+            _authMock.Setup(x => x.IsAttendant()).Returns(false);
+
+            _model = new(mockContext.Object, _mockScheduleService.Object, _authMock.Object);
         }
 
         private readonly BreakTime _input_0 = new()
@@ -240,7 +248,7 @@ namespace ModelTests
             _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
                 .Returns(new ServiceResponse<Schedule>("BreakTime does not exist", StatusCodes.Status404NotFound));
 
-            var result = _model.Update(_input_5);
+            var result = _model.Update(_input_6);
             Assert.AreEqual(expected: "Invalid referred schedule",
                 actual: result.ErrorMessage);
             Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
@@ -265,6 +273,120 @@ namespace ModelTests
                 actual: result.ErrorMessage);
             Assert.AreEqual(expected: StatusCodes.Status500InternalServerError,
                 actual: result.StatusCode);
+        }
+
+        private readonly BreakTime _input_8 = new()
+        {
+            Id = 3L,
+            ScheduleId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(16, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(17, 0, 0)
+        };
+
+        private readonly BreakTime _input_9 = new()
+        {
+            Id = 1L,
+            ScheduleId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(12, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(13, 0, 0)
+        };
+
+        [TestMethod]
+        public async Task AdminAuthorized()
+        {
+            var result1 = await _model.CreateAsync(_input_8);
+            var result2 = _model.FindById(_input_9.Id);
+            var result3 = _model.FindAll();
+            var result4 = await _model.UpdateAsync(_input_9);
+            var result5 = await _model.DeleteAsync(_input_9.Id);
+
+            Assert.AreEqual(expected: StatusCodes.Status201Created, actual: result1.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result2.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result3.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result4.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result5.StatusCode);
+        }
+
+        private readonly BreakTime _input_10 = new()
+        {
+            Id = 3L,
+            ScheduleId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(16, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(17, 0, 0)
+        };
+
+        private readonly BreakTime _input_11 = new()
+        {
+            Id = 1L,
+            ScheduleId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(12, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(13, 0, 0)
+        };
+
+        [TestMethod]
+        public async Task OdontologistAuthorized()
+        {
+            _authMock.Setup(x => x.IsAdmin()).Returns(false);
+            _authMock.Setup(x => x.IsOdontologist(It.IsAny<long>())).Returns(true);
+
+            var result1 = await _model.CreateAsync(_input_10);
+            var result2 = _model.FindById(_input_11.Id);
+            var result3 = _model.FindAll();
+            var result4 = await _model.UpdateAsync(_input_11);
+            var result5 = await _model.DeleteAsync(_input_11.Id);
+
+            Assert.AreEqual(expected: StatusCodes.Status201Created, actual: result1.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result2.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status403Forbidden, actual: result3.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result4.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result5.StatusCode);
+        }
+
+        private readonly BreakTime _input_12 = new()
+        {
+            Id = 3L,
+            ScheduleId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(16, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(17, 0, 0)
+        };
+
+        private readonly BreakTime _input_13 = new()
+        {
+            Id = 1L,
+            ScheduleId = 1L,
+            StartDay = DayOfWeek.Monday,
+            StartTime = new TimeSpan(12, 0, 0),
+            EndDay = DayOfWeek.Monday,
+            EndTime = new TimeSpan(13, 0, 0)
+        };
+
+        [TestMethod]
+        public async Task AttendantAuthorized()
+        {
+            _authMock.Setup(x => x.IsAdmin()).Returns(false);
+            _authMock.Setup(x => x.IsAttendant()).Returns(true);
+
+            var result1 = await _model.CreateAsync(_input_12);
+            var result2 = _model.FindById(_input_13.Id);
+            var result3 = _model.FindAll();
+            var result4 = await _model.UpdateAsync(_input_13);
+            var result5 = await _model.DeleteAsync(_input_13.Id);
+
+            Assert.AreEqual(expected: StatusCodes.Status403Forbidden, actual: result1.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result2.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status200OK, actual: result3.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status403Forbidden, actual: result4.StatusCode);
+            Assert.AreEqual(expected: StatusCodes.Status403Forbidden, actual: result5.StatusCode);
         }
     }
 }
