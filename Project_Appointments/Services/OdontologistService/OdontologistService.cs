@@ -1,18 +1,28 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Services.AuthService;
 
 namespace Project_Appointments.Services.OdontologistService
 {
     public class OdontologistService : IOdontologistService
     {
         private readonly ApplicationContext _context;
-        public OdontologistService(ApplicationContext context)
+        private readonly IAuthService _authService;
+
+        public OdontologistService(ApplicationContext context,
+            IAuthService authService)
         {
             _context = context;
+            _authService = authService;
         }
 
         public ServiceResponse<Odontologist> Create(Odontologist odontologist)
         {
+            if (IsAuthorizedToCreate() is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             _context.Odontologists.Add(odontologist);
             try
             {
@@ -28,6 +38,11 @@ namespace Project_Appointments.Services.OdontologistService
 
         public async Task<ServiceResponse<Odontologist>> CreateAsync(Odontologist odontologist)
         {
+            if (IsAuthorizedToCreate() is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             _context.Odontologists.Add(odontologist);
             try
             {
@@ -43,6 +58,11 @@ namespace Project_Appointments.Services.OdontologistService
 
         public ServiceResponse<string> Delete(long id)
         {
+            if (IsAuthorizedToDelete() is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var query = _context.Odontologists.FirstOrDefault(x => x.Id == id);
             if (query is null)
             {
@@ -64,6 +84,11 @@ namespace Project_Appointments.Services.OdontologistService
 
         public async Task<ServiceResponse<string>> DeleteAsync(long id)
         {
+            if (IsAuthorizedToDelete() is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var query = _context.Odontologists.FirstOrDefault(x => x.Id == id);
             if (query is null)
             {
@@ -85,12 +110,22 @@ namespace Project_Appointments.Services.OdontologistService
 
         public ServiceResponse<IEnumerable<Odontologist>> FindAll()
         {
+            if (IsAuthorizedToReadAll() is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             return new(data: _context.Odontologists,
                 statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Odontologist> FindById(long id)
         {
+            if (IsAuthorizedToRead(resourceId: id) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var query = _context.Odontologists.FirstOrDefault(x => x.Id == id);
             if (query is null)
             {
@@ -102,6 +137,11 @@ namespace Project_Appointments.Services.OdontologistService
 
         public ServiceResponse<Odontologist> Update(Odontologist odontologist)
         {
+            if (IsAuthorizedToUpdate(resourceId: odontologist.Id) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             bool condition = _context.Odontologists.Any(x => x.Id == odontologist.Id);
             if (condition is false)
             {
@@ -123,6 +163,11 @@ namespace Project_Appointments.Services.OdontologistService
 
         public async Task<ServiceResponse<Odontologist>> UpdateAsync(Odontologist odontologist)
         {
+            if (IsAuthorizedToUpdate(resourceId: odontologist.Id) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             bool condition = _context.Odontologists.Any(x => x.Id == odontologist.Id);
             if (condition is false)
             {
@@ -140,6 +185,27 @@ namespace Project_Appointments.Services.OdontologistService
                 statusCode: StatusCodes.Status500InternalServerError);
             }
             return new(data: odontologist, statusCode: StatusCodes.Status200OK);
+        }
+
+        private bool IsAuthorizedToCreate()
+        {
+            return _authService.IsAdmin();
+        }
+        private bool IsAuthorizedToRead(long resourceId)
+        {
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId) || _authService.IsAttendant();
+        }
+        private bool IsAuthorizedToReadAll()
+        {
+            return _authService.IsAdmin() || _authService.IsAttendant();
+        }
+        private bool IsAuthorizedToUpdate(long resourceId)
+        {
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId);
+        }
+        private bool IsAuthorizedToDelete()
+        {
+            return _authService.IsAdmin();
         }
     }
 }

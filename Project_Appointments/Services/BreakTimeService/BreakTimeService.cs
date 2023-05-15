@@ -1,5 +1,6 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.ScheduleService;
 
 namespace Project_Appointments.Services.BreakTimeService
@@ -7,16 +8,27 @@ namespace Project_Appointments.Services.BreakTimeService
     public class BreakTimeService : IBreakTimeService
     {
         private readonly ApplicationContext _context;
+        private readonly IScheduleService _scheduleService;
+        private readonly IAuthService _authService;
         private readonly BreakTimeValidator _validator;
 
-        public BreakTimeService(ApplicationContext context, IScheduleService service)
+        public BreakTimeService(ApplicationContext context,
+            IScheduleService scheduleService,
+            IAuthService authService)
         {
             _context = context;
-            _validator = new(this, service);
+            _scheduleService = scheduleService;
+            _authService = authService;
+            _validator = new(this, scheduleService);
         }
 
         public ServiceResponse<BreakTime> Create(BreakTime breakTime)
         {
+            if (IsAuthorizedToCreate(resource: breakTime.ScheduleId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var validator = _validator.Add(breakTime);
             if (validator.IsValid is false)
             {
@@ -38,6 +50,11 @@ namespace Project_Appointments.Services.BreakTimeService
 
         public async Task<ServiceResponse<BreakTime>> CreateAsync(BreakTime breakTime)
         {
+            if (IsAuthorizedToCreate(resource: breakTime.ScheduleId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var validator = _validator.Add(breakTime);
             if (validator.IsValid is false)
             {
@@ -65,17 +82,32 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: "BreakTime does not exist",
                     statusCode: StatusCodes.Status404NotFound);
             }
+            if (IsAuthorizedToRead(resource: result.ScheduleId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<IEnumerable<BreakTime>> FindAll()
         {
+            if (IsAuthorizedToReadAll() is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var result = _context.BreakTimes.ToList();
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<BreakTime> Update(BreakTime breakTime)
         {
+            if (IsAuthorizedToUpdate(resource: breakTime.ScheduleId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             bool condition = _context.BreakTimes.Any(x => x.Id == breakTime.Id);
             if (condition is false)
             {
@@ -103,6 +135,11 @@ namespace Project_Appointments.Services.BreakTimeService
 
         public async Task<ServiceResponse<BreakTime>> UpdateAsync(BreakTime breakTime)
         {
+            if (IsAuthorizedToUpdate(resource: breakTime.ScheduleId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             bool condition = _context.BreakTimes.Any(x => x.Id == breakTime.Id);
             if (condition is false)
             {
@@ -136,6 +173,11 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: "BreakTime does not exist",
                     statusCode: StatusCodes.Status404NotFound);
             }
+            if (IsAuthorizedToDelete(resource: query.ScheduleId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             _context.BreakTimes.Remove(query);
             try
             {
@@ -156,6 +198,11 @@ namespace Project_Appointments.Services.BreakTimeService
             {
                 return new(errorMessage: "BreakTime does not exist",
                     statusCode: StatusCodes.Status404NotFound);
+            }
+            if (IsAuthorizedToDelete(resource: query.ScheduleId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
             }
             _context.BreakTimes.Remove(query);
             try
@@ -183,6 +230,45 @@ namespace Project_Appointments.Services.BreakTimeService
             var result = _context.BreakTimes
                 .Where(x => x.ScheduleId == appointment.ScheduleId);
             return new(data: result, statusCode: StatusCodes.Status200OK);
+        }
+
+        private bool IsAuthorizedToCreate(long resource)
+        {
+            var query = _scheduleService.FindById(resource).Data;
+            long resourceId = -1L;
+            if (query is not null)
+            {
+                resourceId = query.OdontologistId;
+            }
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId);
+        }
+        private bool IsAuthorizedToRead(long resource)
+        {
+            return _authService.IsAdmin() || _authService.IsOdontologist(resource) || _authService.IsAttendant();
+        }
+        private bool IsAuthorizedToReadAll()
+        {
+            return _authService.IsAdmin() || _authService.IsAttendant();
+        }
+        private bool IsAuthorizedToUpdate(long resource)
+        {
+            var query = _scheduleService.FindById(resource).Data;
+            long resourceId = -1L;
+            if (query is not null)
+            {
+                resourceId = query.OdontologistId;
+            }
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId);
+        }
+        private bool IsAuthorizedToDelete(long resource)
+        {
+            var query = _scheduleService.FindById(resource).Data;
+            long resourceId = -1L;
+            if (query is not null)
+            {
+                resourceId = query.OdontologistId;
+            }
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId);
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Project_Appointments.Models;
 using Project_Appointments.Services.AppointmentService;
 
 namespace Project_Appointments.Controllers
 {
-    [ApiController, Route("api/[controller]")]
+    [ApiController, Route("api/[controller]"), Authorize]
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _service;

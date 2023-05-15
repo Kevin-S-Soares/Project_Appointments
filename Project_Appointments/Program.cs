@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Project_Appointments.Contexts;
 using Project_Appointments.Services.AppointmentService;
+using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.BreakTimeService;
 using Project_Appointments.Services.EmailService;
 using Project_Appointments.Services.OdontologistService;
@@ -36,6 +37,7 @@ public class Program
             options.OperationFilter<SecurityRequirementsOperationFilter>();
         });
 
+
         builder.Services.AddDbContext<ApplicationContext>(x => x.UseSqlServer());
         builder.Services.AddScoped<IOdontologistService, OdontologistService>();
         builder.Services.AddScoped<IScheduleService, ScheduleService>();
@@ -43,6 +45,7 @@ public class Program
         builder.Services.AddScoped<IAppointmentService, AppointmentService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -56,6 +59,8 @@ public class Program
                     ValidateAudience = false
                 };
             });
+
+        builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
 

@@ -1,5 +1,6 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.OdontologistService;
 
 namespace Project_Appointments.Services.ScheduleService
@@ -7,17 +8,25 @@ namespace Project_Appointments.Services.ScheduleService
     public class ScheduleService : IScheduleService
     {
         private readonly ApplicationContext _context;
+        private readonly IAuthService _authService;
         private readonly ScheduleValidator _scheduleValidator;
 
         public ScheduleService(ApplicationContext context,
+            IAuthService authService,
             IOdontologistService odontologistService)
         {
             _context = context;
+            _authService = authService;
             _scheduleValidator = new(this, odontologistService);
         }
 
         public ServiceResponse<Schedule> Create(Schedule schedule)
         {
+            if (IsAuthorizedToCreate(resourceId: schedule.OdontologistId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var validator = _scheduleValidator.Add(schedule);
             if (validator.IsValid is false)
             {
@@ -39,6 +48,11 @@ namespace Project_Appointments.Services.ScheduleService
 
         public async Task<ServiceResponse<Schedule>> CreateAsync(Schedule schedule)
         {
+            if (IsAuthorizedToCreate(resourceId: schedule.OdontologistId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             var validator = _scheduleValidator.Add(schedule);
             if (validator.IsValid is false)
             {
@@ -66,6 +80,11 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: "Schedule does not exist",
                     statusCode: StatusCodes.Status404NotFound);
             }
+            if (IsAuthorizedToDelete(resourceId: query.OdontologistId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             _context.Schedules.Remove(query);
             try
             {
@@ -87,6 +106,11 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: "Schedule does not exist",
                     statusCode: StatusCodes.Status404NotFound);
             }
+            if (IsAuthorizedToDelete(resourceId: query.OdontologistId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             _context.Schedules.Remove(query);
             try
             {
@@ -102,6 +126,11 @@ namespace Project_Appointments.Services.ScheduleService
 
         public ServiceResponse<IEnumerable<Schedule>> FindAll()
         {
+            if (IsAuthorizedToReadAll() is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             return new(data: _context.Schedules,
                 statusCode: StatusCodes.Status200OK);
         }
@@ -122,11 +151,21 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: "Schedule does not exist",
                     statusCode: StatusCodes.Status404NotFound);
             }
+            if (IsAuthorizedToRead(resourceId: query.OdontologistId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             return new(data: query, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Schedule> Update(Schedule schedule)
         {
+            if (IsAuthorizedToUpdate(resourceId: schedule.OdontologistId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             bool condition = _context.Schedules.Any(x => x.Id == schedule.Id);
             if (condition is false)
             {
@@ -154,6 +193,11 @@ namespace Project_Appointments.Services.ScheduleService
 
         public async Task<ServiceResponse<Schedule>> UpdateAsync(Schedule schedule)
         {
+            if (IsAuthorizedToUpdate(resourceId: schedule.OdontologistId) is false)
+            {
+                return new(errorMessage: "Not authorized",
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
             bool condition = _context.Schedules.Any(x => x.Id == schedule.Id);
             if (condition is false)
             {
@@ -177,6 +221,28 @@ namespace Project_Appointments.Services.ScheduleService
                     statusCode: StatusCodes.Status500InternalServerError);
             }
             return new(data: schedule, statusCode: StatusCodes.Status200OK);
+        }
+        private bool IsAuthorizedToCreate(long resourceId)
+        {
+
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId);
+        }
+        private bool IsAuthorizedToRead(long resourceId)
+        {
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId)
+                || _authService.IsAttendant();
+        }
+        private bool IsAuthorizedToReadAll()
+        {
+            return _authService.IsAdmin() || _authService.IsAttendant();
+        }
+        private bool IsAuthorizedToUpdate(long resourceId)
+        {
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId);
+        }
+        private bool IsAuthorizedToDelete(long resourceId)
+        {
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId);
         }
     }
 }

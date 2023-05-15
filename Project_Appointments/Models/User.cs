@@ -10,5 +10,7 @@
         public DateTime? VerifiedAt { get; set; }
         public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpires { get; set; }
+        public string Role { get; set; } = string.Empty;
+        public int? OdontologistId { get; set; }
     }
 }

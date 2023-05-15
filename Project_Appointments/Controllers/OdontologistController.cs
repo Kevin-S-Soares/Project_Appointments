@@ -5,7 +5,7 @@ using Project_Appointments.Services.OdontologistService;
 
 namespace Project_Appointments.Controllers
 {
-    [ApiController, Route("api/[controller]")]
+    [ApiController, Route("api/[controller]"), Authorize]
     public class OdontologistController : ControllerBase
     {
         private readonly IOdontologistService _service;

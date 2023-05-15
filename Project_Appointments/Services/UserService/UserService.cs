@@ -256,7 +256,7 @@ namespace Project_Appointments.Services.UserService
         public ServiceResponse<string> Login(UserLoginRequest request)
         {
             var query = _context.Users.FirstOrDefault(x => x.Email == request.Email);
-            bool condition = query is not null 
+            bool condition = query is not null
                 && VerifyPasswordHash(request.Password, query.PasswordHash, query.PasswordSalt);
             if (condition is false)
             {
@@ -283,7 +283,9 @@ namespace Project_Appointments.Services.UserService
         {
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.Actor,
+                user.OdontologistId is null? "0" : user.OdontologistId.ToString()!)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 Environment.GetEnvironmentVariable("secret_key")!));
