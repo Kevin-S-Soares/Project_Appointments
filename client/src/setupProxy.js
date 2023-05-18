@@ -6,7 +6,8 @@ const context = [
     '/api/User/VerifyToken',
     '/api/User/ForgetPassword',
     '/api/User/ResetPassword',
-    '/api/Odontologist'
+    '/api/Odontologist',
+    '/api/Appointment'
 ];
 
 module.exports = function (app) {

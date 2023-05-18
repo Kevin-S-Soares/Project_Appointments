@@ -1,38 +1,38 @@
 import React from "react";
 
-import { Add } from "./add/Add";
-import { Index } from "./index/Index";
-import { Edit } from "./edit/Edit";
-import { Remove } from "./remove/Remove"
-import { Details } from "./details/Details";
+import { AddOdontologist } from "./add/AddOdontologist";
+import { IndexOdontologist } from "./index/IndexOdontologist";
+import { EditOdontologist } from "./edit/EditOdontologist";
+import { RemoveOdontologist } from "./remove/RemoveOdontologist"
+import { DetailsOdontologist } from "./details/DetailsOdontologist";
 
 
-export function AddOdontologist(props){
+export function Add(props){
     return(
-        <Add />
+        <AddOdontologist />
     );
 }
 
-export function IndexOdontologist(props){
+export function Index(props){
     return(
-        <Index />
+        <IndexOdontologist />
     );
 }
 
-export function EditOdontologist(props){
+export function Edit(props){
     return(
-        <Edit />
+        <EditOdontologist />
     );
 }
 
-export function RemoveOdontologist(props){
+export function Remove(props){
     return(
-        <Remove />
+        <RemoveOdontologist />
     );
 }
 
-export function DetailsOdontologist(props){
+export function Details(props){
     return (
-        <Details />
+        <DetailsOdontologist />
     );
 }

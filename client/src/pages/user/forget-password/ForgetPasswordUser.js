@@ -1,7 +1,7 @@
 import React from "react";
 import { StateHandler } from "./StateHandler";
 
-export function Login(props){
+export function ForgetPasswordUser(props){
     return(
         <StateHandler />
     );

@@ -26,7 +26,7 @@ export class StateHandler extends React.Component {
             method: 'GET',
             headers: header
         }
-        fetch('/api/Odontologist', options)
+        fetch('/api/Appointment', options)
             .then(response => response.json())
             .then(json => this.setState({
                 fetched: true,

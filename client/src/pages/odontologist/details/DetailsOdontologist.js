@@ -1,7 +1,7 @@
 import React from "react";
 import { StateHandler } from "./StateHandler";
 
-export function Index(props){
+export function DetailsOdontologist(props){
     return(
         <StateHandler />
     );

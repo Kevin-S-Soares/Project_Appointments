@@ -1,7 +1,7 @@
 import React from "react";
 import { StateHandler } from "./StateHandler";
 
-export function Register(props){
+export function RegisterUser(props){
     return(
         <StateHandler />
     );

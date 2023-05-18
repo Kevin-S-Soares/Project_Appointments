@@ -1,8 +1,8 @@
 import React from "react";
 import { StateHandler } from "./StateHandler";
 
-export function Details(props){
-    return(
+export function RemoveOdontologist(props){
+    return (
         <StateHandler />
     );
 }

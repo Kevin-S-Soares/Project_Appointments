@@ -1,7 +1,7 @@
 import React from "react";
 import { StateHandler } from "./StateHandler";
 
-export function Verify(props){
+export function IndexAppointment(props){
     return(
         <StateHandler />
     );

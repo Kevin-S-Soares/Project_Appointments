@@ -1,36 +1,36 @@
 import React from "react";
-import { Login } from "./login/Login";
-import { Register } from "./register/Register";
-import { Verify } from "./verify/Verify";
-import { ForgetPassword } from "./forget-password/ForgetPassword";
-import { ResetPassword } from "./reset-password/ResetPassword";
+import { LoginUser } from "./login/LoginUser";
+import { RegisterUser } from "./register/RegisterUser";
+import { VerifyUser } from "./verify/VerifyUser";
+import { ForgetPasswordUser } from "./forget-password/ForgetPasswordUser";
+import { ResetPasswordUser } from "./reset-password/ResetPasswordUser";
 
-export function LoginUser(props){
+export function Login(props){
     return (
-        <Login />
+        <LoginUser />
     );
 }
 
-export function RegisterUser(props){
+export function Register(props){
     return (
-        <Register />
+        <RegisterUser />
     );
 }
 
-export function VerifyUser(props){
+export function Verify(props){
     return(
-        <Verify />
+        <VerifyUser />
     );
 }
 
-export function ForgetPasswordUser(props){
+export function ForgetPassword(props){
     return(
-        <ForgetPassword />
+        <ForgetPasswordUser />
     );
 }
 
-export function ResetPasswordUser(props){
+export function ResetPassword(props){
     return(
-        <ResetPassword />
+        <ResetPasswordUser />
     );
 }
