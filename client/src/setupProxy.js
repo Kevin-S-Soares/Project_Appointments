@@ -2,6 +2,10 @@
 
 const context = [
     '/api/User/Login',
+    '/api/User/Register',
+    '/api/User/VerifyToken',
+    '/api/User/ForgetPassword',
+    '/api/User/ResetPassword',
     '/api/Odontologist'
 ];
 

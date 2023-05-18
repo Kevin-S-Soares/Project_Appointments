@@ -14,6 +14,7 @@ export function Page(props){
                 <input type="tel" id="phone" onChange={props.changeValue} />
                 <br />
                 <input type="submit" onClick={props.submit}/>
+                <a href={window.location.origin + "/Odontologist/Index"}>Return</a>
             </form>
         </div>
     )

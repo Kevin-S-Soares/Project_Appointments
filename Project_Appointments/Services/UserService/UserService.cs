@@ -203,12 +203,16 @@ namespace Project_Appointments.Services.UserService
 
         public ServiceResponse<string> ResetPassword(UserResetPasswordRequest request)
         {
-            var query = _context.Users.FirstOrDefault(x => x.Email == request.Email
-            && x.PasswordResetToken == request.Token);
+            var query = _context.Users.FirstOrDefault(x => x.PasswordResetToken == request.Token);
             if (query is null)
             {
                 return new(errorMessage: "Invalid token",
                     statusCode: StatusCodes.Status400BadRequest);
+            }
+            if (query.ResetTokenExpires > DateTime.UtcNow)
+            {
+                return new(errorMessage: "Expired token",
+                    statusCode: StatusCodes.Status409Conflict);
             }
             CreatePassword(request.Password,
                 out var salt,
@@ -229,8 +233,7 @@ namespace Project_Appointments.Services.UserService
 
         public async Task<ServiceResponse<string>> ResetPasswordAsync(UserResetPasswordRequest request)
         {
-            var query = _context.Users.FirstOrDefault(x => x.Email == request.Email
-            && x.PasswordResetToken == request.Token);
+            var query = _context.Users.FirstOrDefault(x => x.PasswordResetToken == request.Token);
             if (query is null)
             {
                 return new(errorMessage: "Invalid token",

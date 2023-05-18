@@ -14,4 +14,11 @@ export class CookieHandler{
                 'Authorization': this.GetAuthorizationCookie()
             });
     }
+
+    static SetAuthorizationCookie(token){
+        const today = new Date();
+        const nextMonth = new Date(today.getFullYear(),
+         today.getMonth() + 1, today.getDate()).toUTCString();
+        document.cookie = "authorization=bearer " + token + "; expires=" + nextMonth  + "; path=/"
+    }
 }
