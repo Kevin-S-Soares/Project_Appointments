@@ -22,5 +22,10 @@ namespace Project_Appointments.Models
         {
             return HashCode.Combine(Id);
         }
+
+        public DayOfWeek GetStartDay() => StartDay;
+        public DayOfWeek GetEndDay() => EndDay;
+        public TimeSpan GetStartTime() => StartTime;
+        public TimeSpan GetEndTime() => EndTime;
     }
 }

@@ -76,12 +76,12 @@
 
         private static long GetStartTimeTicks(ITimeRepresentation obj)
         {
-            return Convert.ToInt64(obj.StartDay) * TimeSpan.TicksPerDay + obj.StartTime.Ticks;
+            return Convert.ToInt64(obj.GetStartDay()) * TimeSpan.TicksPerDay + obj.GetStartTime().Ticks;
         }
 
         private static long GetEndTimeTicks(ITimeRepresentation obj)
         {
-            return Convert.ToInt64(obj.EndDay) * TimeSpan.TicksPerDay + obj.EndTime.Ticks;
+            return Convert.ToInt64(obj.GetEndDay()) * TimeSpan.TicksPerDay + obj.GetEndTime().Ticks;
         }
     }
 }

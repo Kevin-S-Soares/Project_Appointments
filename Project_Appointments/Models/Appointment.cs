@@ -12,13 +12,13 @@ namespace Project_Appointments.Models
         public string PatientName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
-        public DayOfWeek StartDay { get => Start.DayOfWeek; }
+        public DayOfWeek GetStartDay() => Start.DayOfWeek;
 
-        public DayOfWeek EndDay { get => End.DayOfWeek; }
+        public DayOfWeek GetEndDay() => End.DayOfWeek; 
 
-        public TimeSpan StartTime { get => Start.TimeOfDay; }
+        public TimeSpan GetStartTime() => Start.TimeOfDay; 
 
-        public TimeSpan EndTime { get => End.TimeOfDay; }
+        public TimeSpan GetEndTime() => End.TimeOfDay; 
 
         public override bool Equals(object? obj)
         {
