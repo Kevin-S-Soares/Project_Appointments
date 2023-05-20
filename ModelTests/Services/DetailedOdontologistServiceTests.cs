@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
-using Project_Appointments.Models;
+using Project_Appointments.Models.ContextModels;
 using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.DetailedOdontologistService;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace ModelTests.Services
         private DetailedOdontologistService _model = default!;
         private Mock<IAuthService> _mockAuthService = default!;
 
-        private readonly IQueryable<Odontologist> _odontologists = new List<Odontologist>()
+        private readonly IQueryable<ContextOdontologist> _odontologists = new List<ContextOdontologist>()
         {
             new()
             {
@@ -29,17 +29,17 @@ namespace ModelTests.Services
             }
         }.AsQueryable();
 
-        private readonly IQueryable<Schedule> _schedules = new List<Schedule>()
+        private readonly IQueryable<ContextSchedule> _schedules = new List<ContextSchedule>()
         {
 
         }.AsQueryable();
 
-        private readonly IQueryable<Appointment> _appointments = new List<Appointment>()
+        private readonly IQueryable<ContextAppointment> _appointments = new List<ContextAppointment>()
         {
 
         }.AsQueryable();
 
-        private readonly IQueryable<BreakTime> _breakTimes = new List<BreakTime>()
+        private readonly IQueryable<ContextBreakTime> _breakTimes = new List<ContextBreakTime>()
         {
 
         }.AsQueryable();
@@ -47,10 +47,10 @@ namespace ModelTests.Services
         [TestInitialize]
         public void Setup()
         {
-            var mockOdontologistSet = new Mock<DbSet<Odontologist>>();
-            var mockScheduleSet = new Mock<DbSet<Schedule>>();
-            var mockAppointmentSet = new Mock<DbSet<Appointment>>();
-            var mockBreakTimeSet = new Mock<DbSet<BreakTime>>();
+            var mockOdontologistSet = new Mock<DbSet<ContextOdontologist>>();
+            var mockScheduleSet = new Mock<DbSet<ContextSchedule>>();
+            var mockAppointmentSet = new Mock<DbSet<ContextAppointment>>();
+            var mockBreakTimeSet = new Mock<DbSet<ContextBreakTime>>();
 
             mockOdontologistSet.BindData(_odontologists);
             mockScheduleSet.BindData(_schedules);

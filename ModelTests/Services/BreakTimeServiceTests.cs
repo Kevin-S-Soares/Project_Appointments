@@ -5,6 +5,7 @@ using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Models.ContextModels;
 using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.BreakTimeService;
 using System;
@@ -20,7 +21,7 @@ namespace ModelTests.Services
         private BreakTimeService _model = default!;
         private Mock<IAuthService> _authMock = default!;
 
-        private readonly IQueryable<BreakTime> _dataBreakTime = new List<BreakTime>()
+        private readonly IQueryable<ContextBreakTime> _dataBreakTime = new List<ContextBreakTime>()
         {
             new()
             {
@@ -42,7 +43,7 @@ namespace ModelTests.Services
             }
         }.AsQueryable();
 
-        private readonly IQueryable<Schedule> _dataSchedule = new List<Schedule>()
+        private readonly IQueryable<ContextSchedule> _dataSchedule = new List<ContextSchedule>()
         {
             new()
             {
@@ -59,10 +60,10 @@ namespace ModelTests.Services
         [TestInitialize]
         public void Setup()
         {
-            var mockBreakTimeSet = new Mock<DbSet<BreakTime>>();
+            var mockBreakTimeSet = new Mock<DbSet<ContextBreakTime>>();
             mockBreakTimeSet.BindData(_dataBreakTime);
 
-            var mockScheduleSet = new Mock<DbSet<Schedule>>();
+            var mockScheduleSet = new Mock<DbSet<ContextSchedule>>();
             mockScheduleSet.BindData(_dataSchedule);
 
             var mockContext = new Mock<ApplicationContext>();

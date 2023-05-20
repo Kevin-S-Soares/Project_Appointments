@@ -5,7 +5,7 @@ using Project_Appointments.Services.DetailedOdontologistService;
 
 namespace Project_Appointments.Controllers
 {
-    [Route("api/[controller]"), ApiController, AllowAnonymous]
+    [Route("api/[controller]"), ApiController, Authorize]
 
     public class DetailedOdontologistController : ControllerBase
     {

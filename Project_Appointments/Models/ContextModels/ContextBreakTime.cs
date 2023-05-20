@@ -1,13 +1,13 @@
-﻿using Project_Appointments.Models.Attributes;
-using Project_Appointments.Models.ContextModels;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Project_Appointments.Models
+namespace Project_Appointments.Models.ContextModels
 {
-    [BreakTimeValidation]
-    public class BreakTime : ITimeRepresentation
+    [Table(name: "BreakTimes")]
+    public class ContextBreakTime : ITimeRepresentation
     {
         public long Id { get; set; }
         public long ScheduleId { get; set; }
+        public ContextSchedule Schedule { get; set; } = default!;
         public string Name { get; set; } = string.Empty;
         public DayOfWeek StartDay { get; set; }
         public TimeSpan StartTime { get; set; }
@@ -30,7 +30,7 @@ namespace Project_Appointments.Models
         public TimeSpan GetStartTime() => StartTime;
         public TimeSpan GetEndTime() => EndTime;
 
-        public ContextBreakTime ToContextModel()
+        public BreakTime ToModel()
         {
             return new()
             {

@@ -31,7 +31,8 @@ namespace Project_Appointments.Services.AppointmentService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            _context.Appointments.Add(appointment);
+            var contextModel = appointment.ToContextModel();
+            _context.Appointments.Add(contextModel);
             try
             {
                 _context.SaveChanges();
@@ -40,7 +41,7 @@ namespace Project_Appointments.Services.AppointmentService
             {
                 return new(errorMessage: e.Message, StatusCodes.Status500InternalServerError);
             }
-            return new(data: appointment, statusCode: StatusCodes.Status201Created);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
         }
 
         public async Task<ServiceResponse<Appointment>> CreateAsync(Appointment appointment)
@@ -56,7 +57,8 @@ namespace Project_Appointments.Services.AppointmentService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            await _context.Appointments.AddAsync(appointment);
+            var contextModel = appointment.ToContextModel();
+            await _context.Appointments.AddAsync(contextModel);
             try
             {
                 await _context.SaveChangesAsync();
@@ -65,7 +67,7 @@ namespace Project_Appointments.Services.AppointmentService
             {
                 return new(errorMessage: e.Message, StatusCodes.Status500InternalServerError);
             }
-            return new(data: appointment, statusCode: StatusCodes.Status201Created);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
         }
 
         public ServiceResponse<string> Delete(long id)
@@ -129,7 +131,7 @@ namespace Project_Appointments.Services.AppointmentService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            var result = _context.Appointments;
+            var result = _context.Appointments.Select(x => x.ToModel());
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
@@ -147,7 +149,7 @@ namespace Project_Appointments.Services.AppointmentService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            return new(data: query, statusCode: StatusCodes.Status200OK);
+            return new(data: query.ToModel(), statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Appointment> Update(Appointment appointment)
@@ -169,16 +171,17 @@ namespace Project_Appointments.Services.AppointmentService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
+            var contextModel = appointment.ToContextModel();
             try
             {
-                _context.Appointments.Update(appointment);
+                _context.Appointments.Update(contextModel);
                 _context.SaveChanges();
             }
             catch (Exception e)
             {
                 return new(errorMessage: e.Message, StatusCodes.Status500InternalServerError);
             }
-            return new(data: appointment, statusCode: StatusCodes.Status200OK);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
         }
 
         public async Task<ServiceResponse<Appointment>> UpdateAsync(Appointment appointment)
@@ -200,16 +203,17 @@ namespace Project_Appointments.Services.AppointmentService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
+            var contextModel = appointment.ToContextModel();
             try
             {
-                _context.Appointments.Update(appointment);
+                _context.Appointments.Update(contextModel);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 return new(errorMessage: e.Message, StatusCodes.Status500InternalServerError);
             }
-            return new(data: appointment, statusCode: StatusCodes.Status200OK);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
         }
         private bool IsAuthorizedToCreate(long resource)
         {

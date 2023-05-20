@@ -18,13 +18,11 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
         public ServiceResponse<IEnumerable<DetailedOdontologist>> FindAll()
         {
-            /*
             if (IsAuthorizedToReadAll() is false)
             {
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            */
             var result = new List<DetailedOdontologist>();
             var list =
                 (from odontologists in _context.Odontologists
@@ -32,7 +30,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
             foreach (var element in list)
             {
-                result.Add(GetDetailedOdontologist(element));
+                result.Add(GetDetailedOdontologist(element.ToModel()));
             }
 
             return new(data: result, statusCode: StatusCodes.Status200OK);
@@ -40,13 +38,11 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
         public ServiceResponse<DetailedOdontologist> FindById(long id)
         {
-            /*
             if (IsAuthorizedToRead(resourceId: id) is false)
             {
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            */
             var element =
                 (from odontologists in _context.Odontologists
                  where odontologists.Id == id
@@ -58,7 +54,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     statusCode: StatusCodes.Status404NotFound);
             }
 
-            var result = GetDetailedOdontologist(element);
+            var result = GetDetailedOdontologist(element.ToModel());
 
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
@@ -95,7 +91,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     join schedules in _context.Schedules
                     on odontologists.Id equals schedules.OdontologistId
                     where odontologists.Id == element.Id
-                    select schedules).ToList();
+                    select schedules).Select(x => x.ToModel());
         }
 
         private IEnumerable<Appointment> GetAppointments(Schedule element)
@@ -106,7 +102,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     join appointments in _context.Appointments
                     on schedules.Id equals appointments.ScheduleId
                     where schedules.Id == element.Id
-                    select appointments).ToList();
+                    select appointments).Select(x => x.ToModel());
         }
 
         private IEnumerable<BreakTime> GetBreakTimes(Schedule element)
@@ -117,7 +113,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     join breakTimes in _context.BreakTimes
                     on schedules.Id equals breakTimes.ScheduleId
                     where schedules.Id == element.Id
-                    select breakTimes).ToList();
+                    select breakTimes).Select(x => x.ToModel());
         }
 
         private bool IsAuthorizedToRead(long resourceId)

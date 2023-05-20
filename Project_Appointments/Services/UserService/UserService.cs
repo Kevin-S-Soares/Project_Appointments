@@ -287,8 +287,7 @@ namespace Project_Appointments.Services.UserService
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim(ClaimTypes.Actor,
-                user.OdontologistId is null? "0" : user.OdontologistId.ToString()!)
+                new Claim(ClaimTypes.Actor, user.OdontologistId.ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 Environment.GetEnvironmentVariable("secret_key")!));

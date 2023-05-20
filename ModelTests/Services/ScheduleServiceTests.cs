@@ -5,6 +5,7 @@ using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Models.ContextModels;
 using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.ScheduleService;
 using System;
@@ -20,7 +21,7 @@ namespace ModelTests.Services
         private ScheduleService _model = default!;
         private Mock<IAuthService> _authMock = default!;
 
-        private readonly IQueryable<Schedule> _dataSchedule = new List<Schedule>()
+        private readonly IQueryable<ContextSchedule> _dataSchedule = new List<ContextSchedule>()
         {
             new()
             {
@@ -42,7 +43,7 @@ namespace ModelTests.Services
             }
         }.AsQueryable();
 
-        private readonly IQueryable<Odontologist> _dataOdontologist = new List<Odontologist>()
+        private readonly IQueryable<ContextOdontologist> _dataOdontologist = new List<ContextOdontologist>()
         {
             new()
             {
@@ -63,10 +64,10 @@ namespace ModelTests.Services
         [TestInitialize]
         public void Setup()
         {
-            var scheduleMockSet = new Mock<DbSet<Schedule>>();
+            var scheduleMockSet = new Mock<DbSet<ContextSchedule>>();
             scheduleMockSet.BindData(_dataSchedule);
 
-            var odontologistMockSet = new Mock<DbSet<Odontologist>>();
+            var odontologistMockSet = new Mock<DbSet<ContextOdontologist>>();
             odontologistMockSet.BindData(_dataOdontologist);
 
             _authMock = new();

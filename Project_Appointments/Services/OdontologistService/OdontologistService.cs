@@ -23,7 +23,8 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            _context.Odontologists.Add(odontologist);
+            var contextModel = odontologist.ToContextModel();
+            _context.Odontologists.Add(contextModel);
             try
             {
                 _context.SaveChanges();
@@ -33,7 +34,7 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: odontologist, statusCode: StatusCodes.Status201Created);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
         }
 
         public async Task<ServiceResponse<Odontologist>> CreateAsync(Odontologist odontologist)
@@ -43,7 +44,8 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            _context.Odontologists.Add(odontologist);
+            var contextModel = odontologist.ToContextModel();
+            _context.Odontologists.Add(contextModel);
             try
             {
                 await _context.SaveChangesAsync();
@@ -53,7 +55,7 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: odontologist, statusCode: StatusCodes.Status201Created);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
         }
 
         public ServiceResponse<string> Delete(long id)
@@ -115,8 +117,8 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            return new(data: _context.Odontologists,
-                statusCode: StatusCodes.Status200OK);
+            var result = _context.Odontologists.Select(x => x.ToModel());
+            return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Odontologist> FindById(long id)
@@ -132,7 +134,7 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: "Odontologist does not exist",
                 statusCode: StatusCodes.Status404NotFound);
             }
-            return new(data: query, statusCode: StatusCodes.Status200OK);
+            return new(data: query.ToModel(), statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Odontologist> Update(Odontologist odontologist)
@@ -148,9 +150,10 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: "Odontologist does not exist",
                 statusCode: StatusCodes.Status404NotFound);
             }
+            var contextModel = odontologist.ToContextModel();
             try
             {
-                _context.Odontologists.Update(odontologist);
+                _context.Odontologists.Update(contextModel);
                 _context.SaveChanges();
             }
             catch (Exception e)
@@ -158,7 +161,7 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: e.Message,
                 statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: odontologist, statusCode: StatusCodes.Status200OK);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
         }
 
         public async Task<ServiceResponse<Odontologist>> UpdateAsync(Odontologist odontologist)
@@ -174,9 +177,10 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: "Odontologist does not exist",
                 statusCode: StatusCodes.Status404NotFound);
             }
+            var contextModel = odontologist.ToContextModel();
             try
             {
-                _context.Odontologists.Update(odontologist);
+                _context.Odontologists.Update(contextModel);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -184,7 +188,7 @@ namespace Project_Appointments.Services.OdontologistService
                 return new(errorMessage: e.Message,
                 statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: odontologist, statusCode: StatusCodes.Status200OK);
+            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
         }
 
         private bool IsAuthorizedToCreate()

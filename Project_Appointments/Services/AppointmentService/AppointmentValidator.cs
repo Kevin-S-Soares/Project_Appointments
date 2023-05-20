@@ -115,7 +115,7 @@ namespace Project_Appointments.Services.AppointmentService
                 && x.Start.Day == appointment.Start.Day)
                 || (x.End.Year == appointment.End.Year
                 && x.End.Month == appointment.End.Month
-                && x.End.Day == appointment.End.Day))).ToList();
+                && x.End.Day == appointment.End.Day))).Select(x => x.ToModel());
         }
     }
 }

@@ -1,19 +1,21 @@
-﻿using Appointments_Project.Models.Attributes;
-using Project_Appointments.Models.ContextModels;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Project_Appointments.Models
+namespace Project_Appointments.Models.ContextModels
 {
-    [OdontologistValidation]
-    public class Odontologist
+
+    [Table(name: "Odontologists")]
+    public class ContextOdontologist
     {
         public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
+        public ICollection<ContextSchedule> Schedules { get; set; } = default!;
+
         public override bool Equals(object? obj)
         {
-            return obj is Odontologist odontologist &&
+            return obj is ContextOdontologist odontologist &&
                    Id == odontologist.Id;
         }
 
@@ -22,7 +24,7 @@ namespace Project_Appointments.Models
             return HashCode.Combine(Id);
         }
 
-        public ContextOdontologist ToContextModel()
+        public Odontologist ToModel()
         {
             return new()
             {

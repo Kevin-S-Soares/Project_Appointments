@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project_Appointments.Contexts;
 
@@ -11,9 +12,11 @@ using Project_Appointments.Contexts;
 namespace Project_Appointments.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20230520212010_changedColumns2")]
+    partial class changedColumns2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace Project_Appointments.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextAppointment", b =>
+            modelBuilder.Entity("Project_Appointments.Models.Appointment", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,12 +52,10 @@ namespace Project_Appointments.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ScheduleId");
-
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextBreakTime", b =>
+            modelBuilder.Entity("Project_Appointments.Models.BreakTime", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,12 +84,10 @@ namespace Project_Appointments.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ScheduleId");
-
                     b.ToTable("BreakTimes");
                 });
 
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextOdontologist", b =>
+            modelBuilder.Entity("Project_Appointments.Models.Odontologist", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,7 +112,7 @@ namespace Project_Appointments.Migrations
                     b.ToTable("Odontologists");
                 });
 
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextSchedule", b =>
+            modelBuilder.Entity("Project_Appointments.Models.Schedule", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -191,49 +190,15 @@ namespace Project_Appointments.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextAppointment", b =>
+            modelBuilder.Entity("Project_Appointments.Models.Schedule", b =>
                 {
-                    b.HasOne("Project_Appointments.Models.ContextModels.ContextSchedule", "Schedule")
-                        .WithMany("Appointments")
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Schedule");
-                });
-
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextBreakTime", b =>
-                {
-                    b.HasOne("Project_Appointments.Models.ContextModels.ContextSchedule", "Schedule")
-                        .WithMany("BreakTimes")
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Schedule");
-                });
-
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextSchedule", b =>
-                {
-                    b.HasOne("Project_Appointments.Models.ContextModels.ContextOdontologist", "Odontologist")
-                        .WithMany("Schedules")
+                    b.HasOne("Project_Appointments.Models.Odontologist", "Odontologist")
+                        .WithMany()
                         .HasForeignKey("OdontologistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Odontologist");
-                });
-
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextOdontologist", b =>
-                {
-                    b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("Project_Appointments.Models.ContextModels.ContextSchedule", b =>
-                {
-                    b.Navigation("Appointments");
-
-                    b.Navigation("BreakTimes");
                 });
 #pragma warning restore 612, 618
         }

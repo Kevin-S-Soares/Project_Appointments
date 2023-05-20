@@ -5,6 +5,7 @@ using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
+using Project_Appointments.Models.ContextModels;
 using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.OdontologistService;
 using System.Collections.Generic;
@@ -19,8 +20,7 @@ namespace ModelTests.Services
 
         private OdontologistService _model = default!;
         private Mock<IAuthService> _authMock = default!;
-        private Mock<DbSet<Odontologist>> _setMock = default!;
-        private IQueryable<Odontologist> _data = new List<Odontologist>()
+        private readonly IQueryable<ContextOdontologist> _dataOdontologists = new List<ContextOdontologist>()
         {
             new()
             {
@@ -35,9 +35,9 @@ namespace ModelTests.Services
         public void Setup()
         {
             var contextMock = new Mock<ApplicationContext>();
-            _setMock = new Mock<DbSet<Odontologist>>();
-            _setMock.BindData(_data);
-            contextMock.Setup(x => x.Odontologists).Returns(_setMock.Object);
+            var _mockOdontologistSet = new Mock<DbSet<ContextOdontologist>>();
+            _mockOdontologistSet.BindData(_dataOdontologists);
+            contextMock.Setup(x => x.Odontologists).Returns(_mockOdontologistSet.Object);
             _authMock = new();
 
             _authMock.Setup(x => x.IsAdmin()).Returns(false);
