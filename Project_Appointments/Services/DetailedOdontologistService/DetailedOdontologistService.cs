@@ -18,13 +18,13 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
         public ServiceResponse<IEnumerable<DetailedOdontologist>> FindAll()
         {
+            /*
             if (IsAuthorizedToReadAll() is false)
             {
-                /*
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
-                */
             }
+            */
             var result = new List<DetailedOdontologist>();
             var list =
                 (from odontologists in _context.Odontologists
@@ -40,13 +40,13 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
         public ServiceResponse<DetailedOdontologist> FindById(long id)
         {
+            /*
             if (IsAuthorizedToRead(resourceId: id) is false)
             {
-                /*
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
-                */
             }
+            */
             var element =
                 (from odontologists in _context.Odontologists
                  where odontologists.Id == id
@@ -54,12 +54,8 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
             if (element is null)
             {
-                {
-
-                    return new(errorMessage: "Odontologist does not exist",
-                        statusCode: StatusCodes.Status404NotFound);
-
-                }
+                return new(errorMessage: "Odontologist does not exist",
+                    statusCode: StatusCodes.Status404NotFound);
             }
 
             var result = GetDetailedOdontologist(element);
@@ -73,10 +69,24 @@ namespace Project_Appointments.Services.DetailedOdontologistService
             return new()
             {
                 Odontologist = element,
-                Schedules = GetSchedules(element),
-                Appointments = GetAppointments(element),
-                BreakTimes = GetBreakTimes(element)
+                Schedules = GetDetailedSchedule(element)
             };
+        }
+
+        private IEnumerable<DetailedSchedule> GetDetailedSchedule(Odontologist element)
+        {
+            var result = new List<DetailedSchedule>();
+            var schedules = GetSchedules(element);
+            foreach (var item in schedules)
+            {
+                result.Add(new()
+                {
+                    Schedule = item,
+                    Appointments = GetAppointments(item),
+                    BreakTimes = GetBreakTimes(item)
+                });
+            }
+            return result;
         }
 
         private IEnumerable<Schedule> GetSchedules(Odontologist element)
@@ -88,25 +98,25 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     select schedules).ToList();
         }
 
-        private IEnumerable<Appointment> GetAppointments(Odontologist element)
+        private IEnumerable<Appointment> GetAppointments(Schedule element)
         {
             return (from odontologists in _context.Odontologists
                     join schedules in _context.Schedules
                     on odontologists.Id equals schedules.OdontologistId
                     join appointments in _context.Appointments
                     on schedules.Id equals appointments.ScheduleId
-                    where odontologists.Id == element.Id
+                    where schedules.Id == element.Id
                     select appointments).ToList();
         }
 
-        private IEnumerable<BreakTime> GetBreakTimes(Odontologist element)
+        private IEnumerable<BreakTime> GetBreakTimes(Schedule element)
         {
             return (from odontologists in _context.Odontologists
                     join schedules in _context.Schedules
                     on odontologists.Id equals schedules.OdontologistId
                     join breakTimes in _context.BreakTimes
                     on schedules.Id equals breakTimes.ScheduleId
-                    where odontologists.Id == element.Id
+                    where schedules.Id == element.Id
                     select breakTimes).ToList();
         }
 

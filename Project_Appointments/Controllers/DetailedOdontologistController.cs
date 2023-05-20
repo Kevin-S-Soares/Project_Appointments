@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 using Project_Appointments.Services.DetailedOdontologistService;
 
 namespace Project_Appointments.Controllers
 {
-    [Route("api/[controller]"), ApiController,]
+    [Route("api/[controller]"), ApiController, AllowAnonymous]
 
     public class DetailedOdontologistController : ControllerBase
     {
