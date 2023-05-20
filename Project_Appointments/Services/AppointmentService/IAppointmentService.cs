@@ -8,8 +8,6 @@ namespace Project_Appointments.Services.AppointmentService
         public Task<ServiceResponse<Appointment>> CreateAsync(Appointment appointment);
         public ServiceResponse<Appointment> FindById(long id);
         public ServiceResponse<IEnumerable<Appointment>> FindAll();
-        public ServiceResponse<IEnumerable<Appointment>> FindAppointmentsFromSameDay(Appointment appointment);
-        public ServiceResponse<IEnumerable<Appointment>> FindAppointmentsFromSameSchedule(long odontologistId);
         public ServiceResponse<Appointment> Update(Appointment appointment);
         public Task<ServiceResponse<Appointment>> UpdateAsync(Appointment appointment);
         public ServiceResponse<string> Delete(long id);

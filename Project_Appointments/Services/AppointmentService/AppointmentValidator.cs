@@ -1,21 +1,15 @@
-﻿using Project_Appointments.Models;
-using Project_Appointments.Services.BreakTimeService;
-using Project_Appointments.Services.ScheduleService;
+﻿using Project_Appointments.Contexts;
+using Project_Appointments.Models;
 
 namespace Project_Appointments.Services.AppointmentService
 {
     public class AppointmentValidator
     {
-        private readonly IScheduleService _scheduleService;
-        private readonly IBreakTimeService _breakTimeService;
-        private readonly IAppointmentService _appointmentService;
+        private readonly ApplicationContext _context;
 
-        public AppointmentValidator(IScheduleService scheduleService,
-            IBreakTimeService breakTimeService, IAppointmentService appointmentService)
+        public AppointmentValidator(ApplicationContext context)
         {
-            _scheduleService = scheduleService;
-            _breakTimeService = breakTimeService;
-            _appointmentService = appointmentService;
+            _context = context;
         }
 
         public Validator Add(Appointment appointment)
@@ -25,10 +19,10 @@ namespace Project_Appointments.Services.AppointmentService
 
         public Validator Update(Appointment appointment)
         {
-            return BaseMethod(appointment, isToUpdate: true);
+            return BaseMethod(appointment);
         }
 
-        private Validator BaseMethod(Appointment appointment, bool isToUpdate = false)
+        private Validator BaseMethod(Appointment appointment)
         {
             bool condition = DoesScheduleExist(appointment);
             if (condition is false)
@@ -48,7 +42,7 @@ namespace Project_Appointments.Services.AppointmentService
                 return new("Appointment overlaps breakTimes");
             }
 
-            condition = IsAppointmentWithinOtherAppointments(appointment, isToUpdate);
+            condition = IsAppointmentWithinOtherAppointments(appointment);
             if (condition is true)
             {
                 return new("Appointment overlaps other appointments");
@@ -59,20 +53,23 @@ namespace Project_Appointments.Services.AppointmentService
 
         private bool DoesScheduleExist(Appointment appointment)
         {
-            var query = _scheduleService.FindById(appointment.ScheduleId).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == appointment.ScheduleId);
             return query is not null;
         }
 
         private bool IsAppointmentWithinSchedule(Appointment appointment)
         {
-            var schedule = _scheduleService.FindById(appointment.ScheduleId).Data!;
+            var schedule = _context.Schedules.First(x => x.Id == appointment.ScheduleId);
             return TimeRepresentation.IsCompletelyInserted(
                 contained: appointment, contains: schedule);
         }
 
         private bool IsAppointmentWithinBreakTimes(Appointment appointment)
         {
-            var structure = _breakTimeService.FindAllFromSameSchedule(appointment).Data!;
+            var structure = //_breakTimeService.FindAllFromSameSchedule(appointment).Data!;
+                _context.BreakTimes
+                .Where(x => x.ScheduleId == appointment.ScheduleId)
+                .ToList();
 
             foreach (var element in structure)
             {
@@ -89,15 +86,9 @@ namespace Project_Appointments.Services.AppointmentService
             return false;
         }
 
-        private bool IsAppointmentWithinOtherAppointments(Appointment appointment, bool isToUpdate = false)
+        private bool IsAppointmentWithinOtherAppointments(Appointment appointment)
         {
-            var structure = _appointmentService
-                .FindAppointmentsFromSameDay(appointment).Data!.ToList();
-
-            if (isToUpdate)
-            {
-                structure.Remove(appointment);
-            }
+            var structure = GetAppointmentsFromTheSameDay(appointment);
 
             foreach (var element in structure)
             {
@@ -112,6 +103,19 @@ namespace Project_Appointments.Services.AppointmentService
             }
 
             return false;
+        }
+
+        private IEnumerable<Appointment> GetAppointmentsFromTheSameDay(Appointment appointment)
+        {
+            return _context.Appointments
+                .Where(x => x.Id != appointment.Id
+                && x.ScheduleId == appointment.ScheduleId
+                && ((x.Start.Year == appointment.Start.Year
+                && x.Start.Month == appointment.Start.Month
+                && x.Start.Day == appointment.Start.Day)
+                || (x.End.Year == appointment.End.Year
+                && x.End.Month == appointment.End.Month
+                && x.End.Day == appointment.End.Day))).ToList();
         }
     }
 }

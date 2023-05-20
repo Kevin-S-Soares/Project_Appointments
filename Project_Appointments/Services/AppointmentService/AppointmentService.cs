@@ -1,8 +1,6 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Services.AuthService;
-using Project_Appointments.Services.BreakTimeService;
-using Project_Appointments.Services.ScheduleService;
 
 namespace Project_Appointments.Services.AppointmentService
 {
@@ -10,18 +8,14 @@ namespace Project_Appointments.Services.AppointmentService
     {
         private readonly ApplicationContext _context;
         private readonly AppointmentValidator _validator;
-        private readonly IScheduleService _scheduleService;
         private readonly IAuthService _authService;
 
         public AppointmentService(ApplicationContext context,
-            IBreakTimeService breakTimeService,
-            IScheduleService scheduleService,
             IAuthService authService)
         {
             _context = context;
-            _scheduleService = scheduleService;
-            _validator = new(scheduleService, breakTimeService, this);
             _authService = authService;
+            _validator = new(_context);
         }
 
         public ServiceResponse<Appointment> Create(Appointment appointment)
@@ -139,20 +133,6 @@ namespace Project_Appointments.Services.AppointmentService
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
-        public ServiceResponse<IEnumerable<Appointment>> FindAppointmentsFromSameDay(Appointment appointment)
-        {
-            var result = _context.Appointments
-                .Where(x => x.Id != appointment.Id
-                && x.ScheduleId == appointment.ScheduleId
-                && ((x.Start.Year == appointment.Start.Year
-                && x.Start.Month == appointment.Start.Month
-                && x.Start.Day == appointment.Start.Day)
-                || (x.End.Year == appointment.End.Year
-                && x.End.Month == appointment.End.Month
-                && x.End.Day == appointment.End.Day))).ToList();
-            return new(data: result, statusCode: StatusCodes.Status200OK);
-        }
-
         public ServiceResponse<Appointment> FindById(long id)
         {
 
@@ -168,18 +148,6 @@ namespace Project_Appointments.Services.AppointmentService
                     statusCode: StatusCodes.Status403Forbidden);
             }
             return new(data: query, statusCode: StatusCodes.Status200OK);
-        }
-
-        public ServiceResponse<IEnumerable<Appointment>> FindAppointmentsFromSameSchedule(long scheduleId)
-        {
-            if (IsAuthorizedToRead(resource: scheduleId) is false)
-            {
-                return new(errorMessage: "Not authorized",
-                    statusCode: StatusCodes.Status403Forbidden);
-            }
-
-            var data = _context.Appointments.Where(x => x.ScheduleId == scheduleId).ToList();
-            return new(data: data, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Appointment> Update(Appointment appointment)
@@ -245,7 +213,7 @@ namespace Project_Appointments.Services.AppointmentService
         }
         private bool IsAuthorizedToCreate(long resource)
         {
-            var query = _scheduleService.FindById(resource).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == resource);
             long resourceId = -1;
             if (query is not null)
             {
@@ -265,7 +233,7 @@ namespace Project_Appointments.Services.AppointmentService
         }
         private bool IsAuthorizedToUpdate(long resource)
         {
-            var query = _scheduleService.FindById(resource).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == resource);
             long resourceId = -1L;
             if (query is not null)
             {
@@ -276,7 +244,7 @@ namespace Project_Appointments.Services.AppointmentService
         }
         private bool IsAuthorizedToDelete(long resource)
         {
-            var query = _scheduleService.FindById(resource).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == resource);
             long resourceId = -1L;
             if (query is not null)
             {
