@@ -14,11 +14,11 @@ namespace Project_Appointments.Models
 
         public DayOfWeek GetStartDay() => Start.DayOfWeek;
 
-        public DayOfWeek GetEndDay() => End.DayOfWeek; 
+        public DayOfWeek GetEndDay() => End.DayOfWeek;
 
-        public TimeSpan GetStartTime() => Start.TimeOfDay; 
+        public TimeSpan GetStartTime() => Start.TimeOfDay;
 
-        public TimeSpan GetEndTime() => End.TimeOfDay; 
+        public TimeSpan GetEndTime() => End.TimeOfDay;
 
         public override bool Equals(object? obj)
         {

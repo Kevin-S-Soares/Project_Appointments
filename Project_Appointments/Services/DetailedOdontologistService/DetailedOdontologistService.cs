@@ -9,7 +9,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
         private readonly ApplicationContext _context;
         private readonly IAuthService _authService;
 
-        public DetailedOdontologistService(ApplicationContext context, 
+        public DetailedOdontologistService(ApplicationContext context,
             IAuthService authService)
         {
             _context = context;
@@ -18,7 +18,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
         public ServiceResponse<IEnumerable<DetailedOdontologist>> FindAll()
         {
-            if(IsAuthorizedToReadAll() is false)
+            if (IsAuthorizedToReadAll() is false)
             {
                 /*
                 return new(errorMessage: "Not authorized",
@@ -28,14 +28,14 @@ namespace Project_Appointments.Services.DetailedOdontologistService
             var result = new List<DetailedOdontologist>();
             var list =
                 (from odontologists in _context.Odontologists
-                select odontologists).ToList();
-            
-            foreach(var element in list)
+                 select odontologists).ToList();
+
+            foreach (var element in list)
             {
                 result.Add(GetDetailedOdontologist(element));
             }
 
-            return new (data: result, statusCode: StatusCodes.Status200OK);
+            return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<DetailedOdontologist> FindById(long id)
@@ -52,13 +52,13 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                  where odontologists.Id == id
                  select odontologists).FirstOrDefault();
 
-            if(element is null)
+            if (element is null)
             {
                 {
-                    
+
                     return new(errorMessage: "Odontologist does not exist",
                         statusCode: StatusCodes.Status404NotFound);
-                    
+
                 }
             }
 
@@ -91,28 +91,28 @@ namespace Project_Appointments.Services.DetailedOdontologistService
         private IEnumerable<Appointment> GetAppointments(Odontologist element)
         {
             return (from odontologists in _context.Odontologists
-             join schedules in _context.Schedules
-             on odontologists.Id equals schedules.OdontologistId
-             join appointments in _context.Appointments
-             on schedules.Id equals appointments.ScheduleId
-             where odontologists.Id == element.Id
-             select appointments).ToList();
+                    join schedules in _context.Schedules
+                    on odontologists.Id equals schedules.OdontologistId
+                    join appointments in _context.Appointments
+                    on schedules.Id equals appointments.ScheduleId
+                    where odontologists.Id == element.Id
+                    select appointments).ToList();
         }
 
         private IEnumerable<BreakTime> GetBreakTimes(Odontologist element)
         {
-           return (from odontologists in _context.Odontologists
-             join schedules in _context.Schedules
-             on odontologists.Id equals schedules.OdontologistId
-             join breakTimes in _context.BreakTimes
-             on schedules.Id equals breakTimes.ScheduleId
-             where odontologists.Id == element.Id
-             select breakTimes).ToList();
+            return (from odontologists in _context.Odontologists
+                    join schedules in _context.Schedules
+                    on odontologists.Id equals schedules.OdontologistId
+                    join breakTimes in _context.BreakTimes
+                    on schedules.Id equals breakTimes.ScheduleId
+                    where odontologists.Id == element.Id
+                    select breakTimes).ToList();
         }
 
         private bool IsAuthorizedToRead(long resourceId)
         {
-            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId) 
+            return _authService.IsAdmin() || _authService.IsOdontologist(resourceId)
                 || _authService.IsAttendant();
         }
         private bool IsAuthorizedToReadAll()
