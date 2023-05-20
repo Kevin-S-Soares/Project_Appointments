@@ -46,10 +46,10 @@ namespace Project_Appointments.Services.ScheduleService
 
         private bool IsWithinOtherSchedule(Schedule schedule)
         {
-            var structure =
-                // _scheduleService.FindAllFromSameOdontologist(schedule).Data!.ToList();
-                _context.Schedules.Where(x => x.Id != schedule.Id
-                && x.OdontologistId == schedule.OdontologistId).ToList();
+            var structure = _context.Schedules
+                .Where(x => x.Id != schedule.Id
+                && x.OdontologistId == schedule.OdontologistId)
+                .ToList();
 
 
             foreach (var element in structure)
