@@ -66,7 +66,7 @@ namespace Project_Appointments.Services.AppointmentService
 
         private bool IsAppointmentWithinBreakTimes(Appointment appointment)
         {
-            var structure = //_breakTimeService.FindAllFromSameSchedule(appointment).Data!;
+            var structure =
                 _context.BreakTimes
                 .Where(x => x.ScheduleId == appointment.ScheduleId)
                 .ToList();
