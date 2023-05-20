@@ -1,7 +1,6 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Services.AuthService;
-using Project_Appointments.Services.OdontologistService;
 
 namespace Project_Appointments.Services.ScheduleService
 {
@@ -12,12 +11,11 @@ namespace Project_Appointments.Services.ScheduleService
         private readonly ScheduleValidator _scheduleValidator;
 
         public ScheduleService(ApplicationContext context,
-            IAuthService authService,
-            IOdontologistService odontologistService)
+            IAuthService authService)
         {
             _context = context;
             _authService = authService;
-            _scheduleValidator = new(this, odontologistService);
+            _scheduleValidator = new(_context);
         }
 
         public ServiceResponse<Schedule> Create(Schedule schedule)
@@ -133,14 +131,6 @@ namespace Project_Appointments.Services.ScheduleService
             }
             return new(data: _context.Schedules,
                 statusCode: StatusCodes.Status200OK);
-        }
-
-        public ServiceResponse<IEnumerable<Schedule>> FindAllFromSameOdontologist(Schedule schedule)
-        {
-            var data = _context.Schedules
-                .Where(x => x.OdontologistId == schedule.OdontologistId && x != schedule)
-                .ToList();
-            return new(data: data, StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Schedule> FindById(long id)

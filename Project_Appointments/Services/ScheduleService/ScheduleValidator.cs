@@ -1,17 +1,14 @@
-﻿using Project_Appointments.Models;
-using Project_Appointments.Services.OdontologistService;
+﻿using Project_Appointments.Contexts;
+using Project_Appointments.Models;
 
 namespace Project_Appointments.Services.ScheduleService
 {
     public class ScheduleValidator
     {
-        private readonly IScheduleService _scheduleService;
-        private readonly IOdontologistService _odontologistService;
-        public ScheduleValidator(IScheduleService scheduleService,
-            IOdontologistService odontologistService)
+        private readonly ApplicationContext _context;
+        public ScheduleValidator(ApplicationContext context)
         {
-            _scheduleService = scheduleService;
-            _odontologistService = odontologistService;
+            _context = context;
         }
 
         public Validator Add(Schedule schedule)
@@ -21,10 +18,10 @@ namespace Project_Appointments.Services.ScheduleService
 
         public Validator Update(Schedule schedule)
         {
-            return BaseMethod(schedule, isToUpdate: true);
+            return BaseMethod(schedule);
         }
 
-        private Validator BaseMethod(Schedule schedule, bool isToUpdate = false)
+        private Validator BaseMethod(Schedule schedule)
         {
             bool condition = DoesOdontologistExists(schedule);
             if (condition is false)
@@ -32,7 +29,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new("Invalid referred odontologist");
             }
 
-            condition = IsWithinOtherSchedule(schedule, isToUpdate);
+            condition = IsWithinOtherSchedule(schedule);
             if (condition is true)
             {
                 return new("Schedule overlaps other schedules");
@@ -43,19 +40,17 @@ namespace Project_Appointments.Services.ScheduleService
 
         private bool DoesOdontologistExists(Schedule schedule)
         {
-            var query = _odontologistService.FindById(schedule.Id);
-            return query.Value is not null;
+            var query = _context.Odontologists.FirstOrDefault(x => x.Id == schedule.OdontologistId);
+            return query is not null;
         }
 
-        private bool IsWithinOtherSchedule(Schedule schedule, bool isToUpdate = false)
+        private bool IsWithinOtherSchedule(Schedule schedule)
         {
             var structure =
-                _scheduleService.FindAllFromSameOdontologist(schedule).Data!.ToList();
+                // _scheduleService.FindAllFromSameOdontologist(schedule).Data!.ToList();
+                _context.Schedules.Where(x => x.Id != schedule.Id
+                && x.OdontologistId == schedule.OdontologistId).ToList();
 
-            if (isToUpdate)
-            {
-                structure.Remove(schedule);
-            }
 
             foreach (var element in structure)
             {

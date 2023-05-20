@@ -4,9 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
-using Project_Appointments.Services;
 using Project_Appointments.Services.AuthService;
-using Project_Appointments.Services.OdontologistService;
 using Project_Appointments.Services.ScheduleService;
 using System;
 using System.Collections.Generic;
@@ -43,7 +41,7 @@ namespace ModelTests.Services
             }
         }.AsQueryable();
 
-        private readonly List<Odontologist> _dataOdontologist = new()
+        private readonly IQueryable<Odontologist> _dataOdontologist = new List<Odontologist>()
         {
             new()
             {
@@ -59,24 +57,31 @@ namespace ModelTests.Services
                 Email = "test@test.com",
                 Phone = "(011) 91111-1111"
             }
-        };
+        }.AsQueryable();
 
         [TestInitialize]
         public void Setup()
         {
-            var mockSet = new Mock<DbSet<Schedule>>();
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.Provider)
+            var scheduleMockSet = new Mock<DbSet<Schedule>>();
+            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.Provider)
                 .Returns(_dataSchedule.Provider);
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.Expression)
+            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.Expression)
                 .Returns(_dataSchedule.Expression);
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.ElementType)
+            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.ElementType)
                 .Returns(_dataSchedule.ElementType);
-            mockSet.As<IQueryable<Schedule>>().Setup(x => x.GetEnumerator())
+            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.GetEnumerator())
                 .Returns(_dataSchedule.GetEnumerator());
 
-            var mockOdontologist = new Mock<IOdontologistService>();
-            mockOdontologist.Setup(x => x.FindById(It.IsAny<long>())).
-                Returns(new ServiceResponse<Odontologist>(_dataOdontologist[0], 200));
+            var odontologistMockSet = new Mock<DbSet<Odontologist>>();
+            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.Provider)
+                .Returns(_dataOdontologist.Provider);
+            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.Expression)
+                .Returns(_dataOdontologist.Expression);
+            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.ElementType)
+                .Returns(_dataOdontologist.ElementType);
+            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.GetEnumerator())
+                .Returns(_dataOdontologist.GetEnumerator());
+
 
             _authMock = new();
             _authMock.Setup(x => x.IsAdmin()).Returns(true);
@@ -84,8 +89,9 @@ namespace ModelTests.Services
             _authMock.Setup(x => x.IsAttendant()).Returns(false);
 
             var mockContext = new Mock<ApplicationContext>();
-            mockContext.Setup(x => x.Schedules).Returns(mockSet.Object);
-            _model = new(mockContext.Object, _authMock.Object, mockOdontologist.Object);
+            mockContext.Setup(x => x.Schedules).Returns(scheduleMockSet.Object);
+            mockContext.Setup(x => x.Odontologists).Returns(odontologistMockSet.Object);
+            _model = new(mockContext.Object, _authMock.Object);
         }
 
         private readonly Schedule _input_0 = new()
