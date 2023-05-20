@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
@@ -35,10 +36,7 @@ namespace ModelTests.Services
         {
             var contextMock = new Mock<ApplicationContext>();
             _setMock = new Mock<DbSet<Odontologist>>();
-            _setMock.As<IQueryable<Odontologist>>().Setup(x => x.Provider).Returns(_data.Provider);
-            _setMock.As<IQueryable<Odontologist>>().Setup(x => x.Expression).Returns(_data.Expression);
-            _setMock.As<IQueryable<Odontologist>>().Setup(x => x.ElementType).Returns(_data.ElementType);
-            _setMock.As<IQueryable<Odontologist>>().Setup(x => x.GetEnumerator()).Returns(_data.GetEnumerator());
+            _setMock.BindData(_data);
             contextMock.Setup(x => x.Odontologists).Returns(_setMock.Object);
             _authMock = new();
 

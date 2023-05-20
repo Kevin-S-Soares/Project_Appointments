@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
@@ -63,25 +64,10 @@ namespace ModelTests.Services
         public void Setup()
         {
             var scheduleMockSet = new Mock<DbSet<Schedule>>();
-            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.Provider)
-                .Returns(_dataSchedule.Provider);
-            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.Expression)
-                .Returns(_dataSchedule.Expression);
-            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.ElementType)
-                .Returns(_dataSchedule.ElementType);
-            scheduleMockSet.As<IQueryable<Schedule>>().Setup(x => x.GetEnumerator())
-                .Returns(_dataSchedule.GetEnumerator());
+            scheduleMockSet.BindData(_dataSchedule);
 
             var odontologistMockSet = new Mock<DbSet<Odontologist>>();
-            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.Provider)
-                .Returns(_dataOdontologist.Provider);
-            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.Expression)
-                .Returns(_dataOdontologist.Expression);
-            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.ElementType)
-                .Returns(_dataOdontologist.ElementType);
-            odontologistMockSet.As<IQueryable<Odontologist>>().Setup(x => x.GetEnumerator())
-                .Returns(_dataOdontologist.GetEnumerator());
-
+            odontologistMockSet.BindData(_dataOdontologist);
 
             _authMock = new();
             _authMock.Setup(x => x.IsAdmin()).Returns(true);

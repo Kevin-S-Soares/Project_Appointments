@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
@@ -59,25 +60,10 @@ namespace ModelTests.Services
         public void Setup()
         {
             var mockBreakTimeSet = new Mock<DbSet<BreakTime>>();
-            mockBreakTimeSet.As<IQueryable<BreakTime>>().Setup(x => x.Provider)
-                .Returns(_dataBreakTime.Provider);
-            mockBreakTimeSet.As<IQueryable<BreakTime>>().Setup(x => x.Expression)
-                .Returns(_dataBreakTime.Expression);
-            mockBreakTimeSet.As<IQueryable<BreakTime>>().Setup(x => x.ElementType)
-                .Returns(_dataBreakTime.ElementType);
-            mockBreakTimeSet.As<IQueryable<BreakTime>>().Setup(x => x.GetEnumerator())
-                .Returns(_dataBreakTime.GetEnumerator());
+            mockBreakTimeSet.BindData(_dataBreakTime);
 
             var mockScheduleSet = new Mock<DbSet<Schedule>>();
-            mockScheduleSet.As<IQueryable<Schedule>>().Setup(x => x.Provider)
-                .Returns(_dataSchedule.Provider);
-            mockScheduleSet.As<IQueryable<Schedule>>().Setup(x => x.Expression)
-                .Returns(_dataSchedule.Expression);
-            mockScheduleSet.As<IQueryable<Schedule>>().Setup(x => x.ElementType)
-                .Returns(_dataSchedule.ElementType);
-            mockScheduleSet.As<IQueryable<Schedule>>().Setup(x => x.GetEnumerator())
-                .Returns(_dataSchedule.GetEnumerator());
-
+            mockScheduleSet.BindData(_dataSchedule);
 
             var mockContext = new Mock<ApplicationContext>();
             mockContext.Setup(x => x.BreakTimes).Returns(mockBreakTimeSet.Object);
