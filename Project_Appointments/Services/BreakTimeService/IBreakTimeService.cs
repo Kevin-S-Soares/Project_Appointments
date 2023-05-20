@@ -8,8 +8,6 @@ namespace Project_Appointments.Services.BreakTimeService
         public Task<ServiceResponse<BreakTime>> CreateAsync(BreakTime breakTime);
         public ServiceResponse<BreakTime> FindById(long id);
         public ServiceResponse<IEnumerable<BreakTime>> FindAll();
-        public ServiceResponse<IEnumerable<BreakTime>> FindAllFromSameSchedule(BreakTime breakTime);
-        public ServiceResponse<IEnumerable<BreakTime>> FindAllFromSameSchedule(Appointment appointment);
         public ServiceResponse<BreakTime> Update(BreakTime breakTime);
         public Task<ServiceResponse<BreakTime>> UpdateAsync(BreakTime breakTime);
         public ServiceResponse<string> Delete(long id);

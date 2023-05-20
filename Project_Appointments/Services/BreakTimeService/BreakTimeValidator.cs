@@ -1,17 +1,14 @@
-﻿using Project_Appointments.Models;
-using Project_Appointments.Services.ScheduleService;
+﻿using Project_Appointments.Contexts;
+using Project_Appointments.Models;
 
 namespace Project_Appointments.Services.BreakTimeService
 {
     public class BreakTimeValidator
     {
-        private readonly IBreakTimeService _breakTimeService;
-        private readonly IScheduleService _scheduleService;
-        public BreakTimeValidator(IBreakTimeService breakTimeService,
-            IScheduleService scheduleService)
+        public readonly ApplicationContext _context;
+        public BreakTimeValidator(ApplicationContext context)
         {
-            _breakTimeService = breakTimeService;
-            _scheduleService = scheduleService;
+            _context = context;
         }
 
         public Validator Add(BreakTime breakTime)
@@ -21,10 +18,10 @@ namespace Project_Appointments.Services.BreakTimeService
 
         public Validator Update(BreakTime breakTime)
         {
-            return BaseMethod(breakTime, isToUpdate: true);
+            return BaseMethod(breakTime);
         }
 
-        private Validator BaseMethod(BreakTime breakTime, bool isToUpdate = false)
+        private Validator BaseMethod(BreakTime breakTime)
         {
             bool condition = DoesScheduleExist(breakTime);
             if (condition is false)
@@ -36,7 +33,7 @@ namespace Project_Appointments.Services.BreakTimeService
             {
                 return new(errorMessage: "BreakTime is not within its referred schedule");
             }
-            condition = IsWithinOtherBreakTimes(breakTime, isToUpdate);
+            condition = IsWithinOtherBreakTimes(breakTime);
             if (condition is true)
             {
                 return new(errorMessage: "BreakTime overlaps other breakTimes");
@@ -46,25 +43,23 @@ namespace Project_Appointments.Services.BreakTimeService
 
         private bool DoesScheduleExist(BreakTime breakTime)
         {
-            var query = _scheduleService.FindById(breakTime.ScheduleId).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == breakTime.ScheduleId);
             return query is not null;
         }
 
         private bool IsWithinSchedule(BreakTime breakTime)
         {
-            var schedule = _scheduleService.FindById(breakTime.Id).Data!;
+            var schedule = _context.Schedules.First(x => x.Id == breakTime.ScheduleId);
             return TimeRepresentation.IsCompletelyInserted(
                 contained: breakTime, contains: schedule);
         }
 
-        private bool IsWithinOtherBreakTimes(BreakTime breakTime, bool isToUpdate = false)
+        private bool IsWithinOtherBreakTimes(BreakTime breakTime)
         {
-            var structure = _breakTimeService.FindAllFromSameSchedule(breakTime).Data!.ToList();
-
-            if (isToUpdate)
-            {
-                structure.Remove(breakTime);
-            }
+            var structure = _context.BreakTimes
+                .Where(x => x.ScheduleId == breakTime.ScheduleId
+                && x.Id != breakTime.Id)
+                .ToList();
 
             foreach (var element in structure)
             {

@@ -1,25 +1,21 @@
 ﻿using Project_Appointments.Contexts;
 using Project_Appointments.Models;
 using Project_Appointments.Services.AuthService;
-using Project_Appointments.Services.ScheduleService;
 
 namespace Project_Appointments.Services.BreakTimeService
 {
     public class BreakTimeService : IBreakTimeService
     {
         private readonly ApplicationContext _context;
-        private readonly IScheduleService _scheduleService;
-        private readonly IAuthService _authService;
         private readonly BreakTimeValidator _validator;
+        private readonly IAuthService _authService;
 
         public BreakTimeService(ApplicationContext context,
-            IScheduleService scheduleService,
             IAuthService authService)
         {
             _context = context;
-            _scheduleService = scheduleService;
             _authService = authService;
-            _validator = new(this, scheduleService);
+            _validator = new(_context);
         }
 
         public ServiceResponse<BreakTime> Create(BreakTime breakTime)
@@ -217,24 +213,9 @@ namespace Project_Appointments.Services.BreakTimeService
             return new(data: "BreakTime deleted", statusCode: StatusCodes.Status200OK);
         }
 
-        public ServiceResponse<IEnumerable<BreakTime>> FindAllFromSameSchedule(BreakTime breakTime)
-        {
-            var result = _context.BreakTimes
-                .Where(x => x.ScheduleId == breakTime.ScheduleId && x.Id != breakTime.Id)
-                .ToList();
-            return new(data: result, statusCode: StatusCodes.Status200OK);
-        }
-
-        public ServiceResponse<IEnumerable<BreakTime>> FindAllFromSameSchedule(Appointment appointment)
-        {
-            var result = _context.BreakTimes
-                .Where(x => x.ScheduleId == appointment.ScheduleId);
-            return new(data: result, statusCode: StatusCodes.Status200OK);
-        }
-
         private bool IsAuthorizedToCreate(long resource)
         {
-            var query = _scheduleService.FindById(resource).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == resource);
             long resourceId = -1L;
             if (query is not null)
             {
@@ -252,7 +233,7 @@ namespace Project_Appointments.Services.BreakTimeService
         }
         private bool IsAuthorizedToUpdate(long resource)
         {
-            var query = _scheduleService.FindById(resource).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == resource);
             long resourceId = -1L;
             if (query is not null)
             {
@@ -262,7 +243,7 @@ namespace Project_Appointments.Services.BreakTimeService
         }
         private bool IsAuthorizedToDelete(long resource)
         {
-            var query = _scheduleService.FindById(resource).Data;
+            var query = _context.Schedules.FirstOrDefault(x => x.Id == resource);
             long resourceId = -1L;
             if (query is not null)
             {

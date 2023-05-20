@@ -4,10 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
-using Project_Appointments.Services;
 using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.BreakTimeService;
-using Project_Appointments.Services.ScheduleService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,18 +17,7 @@ namespace ModelTests.Services
     public class BreakTimeServiceTests
     {
         private BreakTimeService _model = default!;
-        private Mock<IScheduleService> _mockScheduleService = default!;
         private Mock<IAuthService> _authMock = default!;
-
-        private readonly Schedule _schedule = new()
-        {
-            Id = 1L,
-            OdontologistId = 1L,
-            StartDay = DayOfWeek.Monday,
-            StartTime = new TimeSpan(9, 0, 0),
-            EndDay = DayOfWeek.Monday,
-            EndTime = new TimeSpan(21, 0, 0)
-        };
 
         private readonly IQueryable<BreakTime> _dataBreakTime = new List<BreakTime>()
         {
@@ -96,16 +83,13 @@ namespace ModelTests.Services
             mockContext.Setup(x => x.BreakTimes).Returns(mockBreakTimeSet.Object);
             mockContext.Setup(x => x.Schedules).Returns(mockScheduleSet.Object);
 
-            _mockScheduleService = new Mock<IScheduleService>();
-            _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
-                .Returns(new ServiceResponse<Schedule>(_schedule, 200));
 
             _authMock = new();
             _authMock.Setup(x => x.IsAdmin()).Returns(true);
             _authMock.Setup(x => x.IsOdontologist(It.IsAny<long>())).Returns(false);
             _authMock.Setup(x => x.IsAttendant()).Returns(false);
 
-            _model = new(mockContext.Object, _mockScheduleService.Object, _authMock.Object);
+            _model = new(mockContext.Object, _authMock.Object);
         }
 
         private readonly BreakTime _input_0 = new()
@@ -161,9 +145,6 @@ namespace ModelTests.Services
         [TestMethod]
         public void AddInvalidBreakTime_1()
         {
-            _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
-                .Returns(new ServiceResponse<Schedule>("BreakTime does not exist", StatusCodes.Status404NotFound));
-
             var result = _model.Create(_input_2);
             Assert.AreEqual(expected: "Invalid referred schedule",
                 actual: result.ErrorMessage);
@@ -245,9 +226,6 @@ namespace ModelTests.Services
         [TestMethod]
         public void UpdateInvalidBreakTime_1()
         {
-            _mockScheduleService.Setup(x => x.FindById(It.IsAny<long>()))
-                .Returns(new ServiceResponse<Schedule>("BreakTime does not exist", StatusCodes.Status404NotFound));
-
             var result = _model.Update(_input_6);
             Assert.AreEqual(expected: "Invalid referred schedule",
                 actual: result.ErrorMessage);
