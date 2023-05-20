@@ -22,3 +22,23 @@ export function Page(props){
         </div>
     )
 }
+
+export function selectOdontologist(props){
+    const options = props.odontologist.map(element => 
+        <option value={element.id}>{element.name}</option>);
+    return (
+        <select>
+            {options}
+        </select>
+    );
+}
+
+export function selectSchedules(props){
+    const options = props.schedules.map(element => 
+        <option value={element.id}>{element.id}</option>);
+    return (
+        <select>
+            {options}
+        </select>
+    );
+}

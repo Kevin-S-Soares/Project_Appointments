@@ -1,3 +1,6 @@
+import React from "react";
+import {DateFormat} from "../../../tools/DateFormat"
+
 export function Page(props) {
     let state;
     if (!props.fetched) {
@@ -42,6 +45,7 @@ function populateTable(props) {
                         <td>Start</td>
                         <td>End</td>
                         <td>Patient name</td>
+                        <td>Description</td>
                         <td colSpan={2}>Actions</td>
                     </tr>
                 </thead>
@@ -49,9 +53,10 @@ function populateTable(props) {
                     {props.data.map((element, iteration) =>
                         <tr key={iteration}>
                             <td>{element.id}</td>
-                            <td>{element.start}</td>
-                            <td>{element.end}</td>
-                            <td >{element.patientName}</td>
+                            <td>{DateFormat.getDateTime(new Date(element.start))}</td>
+                            <td>{DateFormat.getDateTime(new Date(element.end))}</td>
+                            <td>{element.patientName}</td>
+                            <td>{element.description}</td>
                             <td><a href={url + "/Appointment/Edit/" + element.id}>Edit</a></td>
                             <td><a href={url + "/Appointment/Remove/" + element.id}>Remove</a></td>
                         </tr>

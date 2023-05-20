@@ -5,7 +5,7 @@ import { CookieHandler } from "../../../cookies/CookieHandler"
 export class StateHandler extends React.Component{
     constructor(props){
         super(props);
-        this.odontologist = {
+        this.appointment = {
             name: '',
             email: '',
             phone: ''
@@ -35,7 +35,7 @@ export class StateHandler extends React.Component{
             body: body
         }
         
-        fetch('/api/Odontologist', options)
+        fetch('/api/Appointment', options)
         .then(response => response.json())
         .then(json => console.log(json));
     }
@@ -45,6 +45,8 @@ export class StateHandler extends React.Component{
         const value = event.target.value;
         this.odontologist[key] = value;
     }
+
+
 
 
 }

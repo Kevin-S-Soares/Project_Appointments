@@ -6,6 +6,7 @@ using Project_Appointments.Contexts;
 using Project_Appointments.Services.AppointmentService;
 using Project_Appointments.Services.AuthService;
 using Project_Appointments.Services.BreakTimeService;
+using Project_Appointments.Services.DetailedOdontologistService;
 using Project_Appointments.Services.EmailService;
 using Project_Appointments.Services.OdontologistService;
 using Project_Appointments.Services.ScheduleService;
@@ -46,6 +47,7 @@ public class Program
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IDetailedOdontologistService, DetailedOdontologistService>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
