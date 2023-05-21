@@ -1,5 +1,4 @@
 ﻿using Project_Appointments.Models.Attributes;
-using Project_Appointments.Models.ContextModels;
 
 namespace Project_Appointments.Models
 {
@@ -29,19 +28,5 @@ namespace Project_Appointments.Models
         public DayOfWeek GetEndDay() => EndDay;
         public TimeSpan GetStartTime() => StartTime;
         public TimeSpan GetEndTime() => EndTime;
-
-        public ContextBreakTime ToContextModel()
-        {
-            return new()
-            {
-                Id = Id,
-                ScheduleId = ScheduleId,
-                Name = Name,
-                StartDay = StartDay,
-                StartTime = StartTime,
-                EndDay = EndDay,
-                EndTime = EndTime,
-            };
-        }
     }
 }

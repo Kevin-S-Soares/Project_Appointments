@@ -1,5 +1,4 @@
 ﻿using Appointments_Project.Models.Attributes;
-using Project_Appointments.Models.ContextModels;
 
 namespace Project_Appointments.Models
 {
@@ -20,17 +19,6 @@ namespace Project_Appointments.Models
         public override int GetHashCode()
         {
             return HashCode.Combine(Id);
-        }
-
-        public ContextOdontologist ToContextModel()
-        {
-            return new()
-            {
-                Id = Id,
-                Name = Name,
-                Phone = Phone,
-                Email = Email
-            };
         }
     }
 }

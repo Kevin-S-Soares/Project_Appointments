@@ -31,8 +31,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = schedule.ToContextModel();
-            _context.Schedules.Add(contextModel);
+            _context.Schedules.Add(schedule);
             try
             {
                 _context.SaveChangesAsync();
@@ -42,7 +41,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
+            return new(data: schedule, statusCode: StatusCodes.Status201Created);
         }
 
         public async Task<ServiceResponse<Schedule>> CreateAsync(Schedule schedule)
@@ -58,8 +57,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = schedule.ToContextModel();
-            await _context.Schedules.AddAsync(contextModel);
+            await _context.Schedules.AddAsync(schedule);
             try
             {
                 await _context.SaveChangesAsync();
@@ -69,7 +67,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
+            return new(data: schedule, statusCode: StatusCodes.Status201Created);
         }
 
         public ServiceResponse<string> Delete(long id)
@@ -131,7 +129,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            var result = _context.Schedules.Select(x => x.ToModel());
+            var result = _context.Schedules;
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
@@ -148,7 +146,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            return new(data: query.ToModel(), statusCode: StatusCodes.Status200OK);
+            return new(data: query, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<Schedule> Update(Schedule schedule)
@@ -170,10 +168,9 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = schedule.ToContextModel();
             try
             {
-                _context.Schedules.Update(contextModel);
+                _context.Schedules.Update(schedule);
                 _context.SaveChanges();
             }
             catch (Exception e)
@@ -181,7 +178,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
+            return new(data: schedule, statusCode: StatusCodes.Status200OK);
         }
 
         public async Task<ServiceResponse<Schedule>> UpdateAsync(Schedule schedule)
@@ -203,10 +200,9 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = schedule.ToContextModel();
             try
             {
-                _context.Schedules.Update(contextModel);
+                _context.Schedules.Update(schedule);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -214,7 +210,7 @@ namespace Project_Appointments.Services.ScheduleService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
+            return new(data: schedule, statusCode: StatusCodes.Status200OK);
         }
         private bool IsAuthorizedToCreate(long resourceId)
         {

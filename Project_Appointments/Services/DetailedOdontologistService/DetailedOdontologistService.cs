@@ -30,7 +30,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
 
             foreach (var element in list)
             {
-                result.Add(GetDetailedOdontologist(element.ToModel()));
+                result.Add(GetDetailedOdontologist(element));
             }
 
             return new(data: result, statusCode: StatusCodes.Status200OK);
@@ -54,7 +54,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     statusCode: StatusCodes.Status404NotFound);
             }
 
-            var result = GetDetailedOdontologist(element.ToModel());
+            var result = GetDetailedOdontologist(element);
 
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
@@ -91,7 +91,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     join schedules in _context.Schedules
                     on odontologists.Id equals schedules.OdontologistId
                     where odontologists.Id == element.Id
-                    select schedules).Select(x => x.ToModel());
+                    select schedules);
         }
 
         private IEnumerable<Appointment> GetAppointments(Schedule element)
@@ -102,7 +102,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     join appointments in _context.Appointments
                     on schedules.Id equals appointments.ScheduleId
                     where schedules.Id == element.Id
-                    select appointments).Select(x => x.ToModel());
+                    select appointments);
         }
 
         private IEnumerable<BreakTime> GetBreakTimes(Schedule element)
@@ -113,7 +113,7 @@ namespace Project_Appointments.Services.DetailedOdontologistService
                     join breakTimes in _context.BreakTimes
                     on schedules.Id equals breakTimes.ScheduleId
                     where schedules.Id == element.Id
-                    select breakTimes).Select(x => x.ToModel());
+                    select breakTimes);
         }
 
         private bool IsAuthorizedToRead(long resourceId)

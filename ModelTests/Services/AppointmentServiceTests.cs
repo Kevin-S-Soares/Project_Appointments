@@ -5,7 +5,6 @@ using ModelTests.Tools;
 using Moq;
 using Project_Appointments.Contexts;
 using Project_Appointments.Models;
-using Project_Appointments.Models.ContextModels;
 using Project_Appointments.Services.AppointmentService;
 using Project_Appointments.Services.AuthService;
 using System;
@@ -21,7 +20,7 @@ namespace ModelTests.Services
         private AppointmentService _model = default!;
         private Mock<IAuthService> _authMock = default!;
 
-        private readonly IQueryable<ContextBreakTime> _dataBreakTime = new List<ContextBreakTime>()
+        private readonly IQueryable<BreakTime> _dataBreakTime = new List<BreakTime>()
         {
             new()
             {
@@ -34,7 +33,7 @@ namespace ModelTests.Services
             }
         }.AsQueryable();
 
-        private readonly IQueryable<ContextSchedule> _dataSchedule = new List<ContextSchedule>()
+        private readonly IQueryable<Schedule> _dataSchedule = new List<Schedule>()
         {
             new()
             {
@@ -48,7 +47,7 @@ namespace ModelTests.Services
         }.AsQueryable();
 
 
-        private readonly IQueryable<ContextAppointment> _dataAppointment = new List<ContextAppointment>()
+        private readonly IQueryable<Appointment> _dataAppointment = new List<Appointment>()
         {
             new()
             {
@@ -64,13 +63,13 @@ namespace ModelTests.Services
         [TestInitialize]
         public void Setup()
         {
-            var mockAppointmentSet = new Mock<DbSet<ContextAppointment>>();
+            var mockAppointmentSet = new Mock<DbSet<Appointment>>();
             mockAppointmentSet.BindData(_dataAppointment);
 
-            var mockScheduleSet = new Mock<DbSet<ContextSchedule>>();
+            var mockScheduleSet = new Mock<DbSet<Schedule>>();
             mockScheduleSet.BindData(_dataSchedule);
 
-            var mockBreakTimeSet = new Mock<DbSet<ContextBreakTime>>();
+            var mockBreakTimeSet = new Mock<DbSet<BreakTime>>();
             mockBreakTimeSet.BindData(_dataBreakTime);
 
             var mockContext = new Mock<ApplicationContext>();

@@ -31,8 +31,7 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = breakTime.ToContextModel();
-            _context.BreakTimes.Add(contextModel);
+            _context.BreakTimes.Add(breakTime);
             try
             {
                 _context.SaveChanges();
@@ -42,7 +41,7 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
+            return new(data: breakTime, statusCode: StatusCodes.Status201Created);
         }
 
         public async Task<ServiceResponse<BreakTime>> CreateAsync(BreakTime breakTime)
@@ -58,10 +57,9 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = breakTime.ToContextModel();
-            _context.BreakTimes.Add(contextModel);
             try
             {
+                await _context.BreakTimes.AddAsync(breakTime);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -69,23 +67,23 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status201Created);
+            return new(data: breakTime, statusCode: StatusCodes.Status201Created);
         }
 
         public ServiceResponse<BreakTime> FindById(long id)
         {
-            var result = _context.BreakTimes.FirstOrDefault(x => x.Id == id);
-            if (result is null)
+            var query = _context.BreakTimes.FirstOrDefault(x => x.Id == id);
+            if (query is null)
             {
                 return new(errorMessage: "BreakTime does not exist",
                     statusCode: StatusCodes.Status404NotFound);
             }
-            if (IsAuthorizedToRead(resource: result.ScheduleId) is false)
+            if (IsAuthorizedToRead(resource: query.ScheduleId) is false)
             {
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            return new(data: result.ToModel(), statusCode: StatusCodes.Status200OK);
+            return new(data: query, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<IEnumerable<BreakTime>> FindAll()
@@ -95,7 +93,7 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: "Not authorized",
                     statusCode: StatusCodes.Status403Forbidden);
             }
-            var result = _context.BreakTimes.Select(x => x.ToModel());
+            var result = _context.BreakTimes;
             return new(data: result, statusCode: StatusCodes.Status200OK);
         }
 
@@ -118,10 +116,9 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = breakTime.ToContextModel();
             try
             {
-                _context.BreakTimes.Update(contextModel);
+                _context.BreakTimes.Update(breakTime);
                 _context.SaveChanges();
             }
             catch (Exception e)
@@ -129,7 +126,7 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
+            return new(data: breakTime, statusCode: StatusCodes.Status200OK);
         }
 
         public async Task<ServiceResponse<BreakTime>> UpdateAsync(BreakTime breakTime)
@@ -151,10 +148,9 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: validator.ErrorMessage,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            var contextModel = breakTime.ToContextModel();
             try
             {
-                _context.BreakTimes.Update(contextModel);
+                _context.BreakTimes.Update(breakTime);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -162,7 +158,7 @@ namespace Project_Appointments.Services.BreakTimeService
                 return new(errorMessage: e.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
-            return new(data: contextModel.ToModel(), statusCode: StatusCodes.Status200OK);
+            return new(data: breakTime, statusCode: StatusCodes.Status200OK);
         }
 
         public ServiceResponse<string> Delete(long id)
