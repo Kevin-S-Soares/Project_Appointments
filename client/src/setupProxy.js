@@ -7,7 +7,8 @@ const context = [
     '/api/User/ForgetPassword',
     '/api/User/ResetPassword',
     '/api/Odontologist',
-    '/api/Appointment'
+    '/api/Appointment',
+    '/api/DetailedOdontologist'
 ];
 
 module.exports = function (app) {
