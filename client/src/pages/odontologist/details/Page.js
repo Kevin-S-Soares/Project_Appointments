@@ -29,7 +29,7 @@ function noData(props) {
 function populateList(props) {
     return (
         <div>
-            <dl>
+            <dl className="dl-horizontal">
                 <dt>Id</dt>
                 <dd>{props.data.id}</dd>
                 <dt>Name</dt>

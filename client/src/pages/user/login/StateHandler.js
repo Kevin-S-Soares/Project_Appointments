@@ -1,6 +1,7 @@
 import React from "react";
 import { Page } from "./Page";
 import { CookieHandler } from "../../../cookies/CookieHandler";
+import { AuthenticationHandler } from "../../../tools/AuthenticationHandler";
 
 export class StateHandler extends React.Component{
     constructor(props){
@@ -10,16 +11,24 @@ export class StateHandler extends React.Component{
             password: ''
         };
 
+        this.state = {
+            message: null
+        }
+
         this.changeValue = this.changeValue.bind(this);
         this.submit = this.submit.bind(this);
 
     }
 
     render(){
+        if(AuthenticationHandler.IsLogged()){
+            window.location = window.location.origin
+        }
         return (
             <Page 
             submit={this.submit}
             changeValue={this.changeValue}
+            message={this.state.message}
             />
         );
     }
@@ -46,11 +55,14 @@ export class StateHandler extends React.Component{
         fetch('/api/User/Login', options)
         .then(response => {
             if(response.status !== 200){
-                throw Error(response.statusText);
+                return response.text().then(error => {throw new Error(error)});
             }
             return response.text();
         })
-        .then(token => CookieHandler.SetAuthorizationCookie(token))
-        .catch(error => console.log(error));
+        .then(token => {
+            CookieHandler.SetAuthorizationCookie(token);
+            window.location = window.location.origin + "/Appointment/Index";
+        })
+        .catch(error => this.setState({message: error.message}));
     }
 }

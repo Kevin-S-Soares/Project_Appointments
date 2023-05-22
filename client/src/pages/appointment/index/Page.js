@@ -1,5 +1,5 @@
 import React from "react";
-import {DateFormat} from "../../../tools/DateFormat"
+import { DateFormat } from "../../../tools/DateFormat"
 
 export function Page(props) {
     let state;

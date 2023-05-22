@@ -12,8 +12,10 @@ export function Page(props) {
         }
     }
     return (
-        <div>
-            <a href={window.location.origin + "/Odontologist/Add"}>Add new odontologist</a>
+        <div className="">
+            <a className="btn btn-default" href={window.location.origin + "/Odontologist/Add"}>Add new odontologist</a>
+            <br />
+            <br />
             {state}
         </div>
     );
@@ -35,7 +37,7 @@ function populateTable(props) {
     const url = window.location.origin;
     return (
         <div>
-            <table border={1}>
+            <table className="table table-hover table-bordered">
                 <thead>
                     <tr>
                         <td><b>Id</b></td>
