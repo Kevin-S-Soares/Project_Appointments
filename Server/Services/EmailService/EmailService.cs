@@ -2,9 +2,9 @@
 using MailKit.Security;
 using MimeKit;
 using MimeKit.Text;
-using Project_Appointments.Models;
+using Server.Models;
 
-namespace Project_Appointments.Services.EmailService
+namespace Server.Services.EmailService
 {
     public class EmailService : IEmailService
     {

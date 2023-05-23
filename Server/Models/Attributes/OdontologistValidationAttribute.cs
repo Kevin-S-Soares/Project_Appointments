@@ -1,8 +1,7 @@
-﻿using Project_Appointments.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace Appointments_Project.Models.Attributes
+namespace Server.Models.Attributes
 {
     public class OdontologistValidationAttribute : ValidationAttribute
     {

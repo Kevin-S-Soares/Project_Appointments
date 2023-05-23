@@ -1,4 +1,4 @@
-﻿namespace Project_Appointments.Models
+﻿namespace Server.Models
 {
     public class DetailedOdontologist
     {

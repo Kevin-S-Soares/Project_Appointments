@@ -1,4 +1,4 @@
-﻿namespace Project_Appointments.Services
+﻿namespace Server.Services
 {
     public class Validator
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project_Appointments.Models.Requests;
-using Project_Appointments.Services.UserService;
+using Server.Models.Requests;
+using Server.Services.UserService;
 
-namespace Project_Appointments.Controllers
+namespace Server.Controllers
 {
 
     [ApiController, Route("api/[controller]")]

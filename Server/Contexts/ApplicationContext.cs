@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Project_Appointments.Models;
+using Server.Models;
 
-namespace Project_Appointments.Contexts
+namespace Server.Contexts
 {
     public class ApplicationContext : DbContext
     {

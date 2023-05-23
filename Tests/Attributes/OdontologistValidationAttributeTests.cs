@@ -1,6 +1,6 @@
-using Appointments_Project.Models.Attributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Project_Appointments.Models;
+using Server.Models;
+using Server.Models.Attributes;
 
 namespace ModelTests
 {

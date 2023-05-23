@@ -1,6 +1,6 @@
-﻿using Project_Appointments.Models;
+﻿using Server.Models;
 
-namespace Project_Appointments.Services.OdontologistService
+namespace Server.Services.OdontologistService
 {
     public interface IOdontologistService
     {

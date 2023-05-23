@@ -1,7 +1,7 @@
-﻿using Project_Appointments.Contexts;
-using Project_Appointments.Models;
+﻿using Server.Contexts;
+using Server.Models;
 
-namespace Project_Appointments.Services.AppointmentService
+namespace Server.Services.AppointmentService
 {
     public class AppointmentValidator
     {

@@ -1,4 +1,4 @@
-﻿namespace Project_Appointments.Services.AuthService
+﻿namespace Server.Services.AuthService
 {
     public interface IAuthService
     {

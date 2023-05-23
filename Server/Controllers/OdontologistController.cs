@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Project_Appointments.Models;
-using Project_Appointments.Services.OdontologistService;
+using Server.Models;
+using Server.Services.OdontologistService;
 
-namespace Project_Appointments.Controllers
+namespace Server.Controllers
 {
     [ApiController, Route("api/[controller]"), Authorize]
     public class OdontologistController : ControllerBase

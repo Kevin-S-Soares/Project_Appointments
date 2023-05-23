@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Project_Appointments.Models.Requests
+﻿namespace Server.Models.Requests
 {
     public class UserLoginRequest
     {

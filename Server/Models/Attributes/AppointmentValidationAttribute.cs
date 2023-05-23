@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace Project_Appointments.Models.Attributes
+namespace Server.Models.Attributes
 {
     public class AppointmentValidationAttribute : ValidationAttribute
     {

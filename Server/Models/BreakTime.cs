@@ -1,6 +1,6 @@
-﻿using Project_Appointments.Models.Attributes;
+﻿using Server.Models.Attributes;
 
-namespace Project_Appointments.Models
+namespace Server.Models
 {
     [BreakTimeValidation]
     public class BreakTime : ITimeRepresentation

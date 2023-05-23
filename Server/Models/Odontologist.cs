@@ -1,6 +1,6 @@
-﻿using Appointments_Project.Models.Attributes;
+﻿using Server.Models.Attributes;
 
-namespace Project_Appointments.Models
+namespace Server.Models
 {
     [OdontologistValidation]
     public class Odontologist

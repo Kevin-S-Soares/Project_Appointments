@@ -1,6 +1,6 @@
-﻿using Project_Appointments.Models;
+﻿using Server.Models;
 
-namespace Project_Appointments.Services.AppointmentService
+namespace Server.Services.AppointmentService
 {
     public interface IAppointmentService
     {

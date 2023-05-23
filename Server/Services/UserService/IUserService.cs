@@ -1,6 +1,6 @@
-﻿using Project_Appointments.Models.Requests;
+﻿using Server.Models.Requests;
 
-namespace Project_Appointments.Services.UserService
+namespace Server.Services.UserService
 {
     public interface IUserService
     {

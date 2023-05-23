@@ -1,14 +1,14 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Project_Appointments.Contexts;
-using Project_Appointments.Models;
-using Project_Appointments.Models.Requests;
-using Project_Appointments.Services.EmailService;
+using Server.Contexts;
+using Server.Models;
+using Server.Models.Requests;
+using Server.Services.EmailService;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Project_Appointments.Services.UserService
+namespace Server.Services.UserService
 {
     public class UserService : IUserService
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Project_Appointments.Services
+namespace Server.Services
 {
     public class ServiceResponse<T> : ObjectResult
     {

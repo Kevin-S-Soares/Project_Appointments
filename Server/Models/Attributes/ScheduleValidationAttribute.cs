@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Project_Appointments.Models.Attributes
+namespace Server.Models.Attributes
 {
     public class ScheduleValidationAttribute : ValidationAttribute
     {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using Project_Appointments.Services.DetailedOdontologistService;
+using Server.Services.DetailedOdontologistService;
 
-namespace Project_Appointments.Controllers
+namespace Server.Controllers
 {
     [Route("api/[controller]"), ApiController, Authorize]
 

@@ -1,6 +1,6 @@
-﻿using Project_Appointments.Models;
+﻿using Server.Models;
 
-namespace Project_Appointments.Services.BreakTimeService
+namespace Server.Services.BreakTimeService
 {
     public interface IBreakTimeService
     {

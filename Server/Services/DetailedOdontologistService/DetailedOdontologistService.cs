@@ -1,8 +1,8 @@
-﻿using Project_Appointments.Contexts;
-using Project_Appointments.Models;
-using Project_Appointments.Services.AuthService;
+﻿using Server.Contexts;
+using Server.Models;
+using Server.Services.AuthService;
 
-namespace Project_Appointments.Services.DetailedOdontologistService
+namespace Server.Services.DetailedOdontologistService
 {
     public class DetailedOdontologistService : IDetailedOdontologistService
     {
