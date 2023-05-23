@@ -9,11 +9,11 @@ namespace Project_Appointments.Contexts
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options) { }
 
-        public virtual DbSet<Odontologist> Odontologists { get; set; }
-        public virtual DbSet<Appointment> Appointments { get; set; }
-        public virtual DbSet<Schedule> Schedules { get; set; }
-        public virtual DbSet<BreakTime> BreakTimes { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Odontologist> Odontologists { get; set; } = default!;
+        public virtual DbSet<Appointment> Appointments { get; set; } = default!;
+        public virtual DbSet<Schedule> Schedules { get; set; } = default!;
+        public virtual DbSet<BreakTime> BreakTimes { get; set; } = default!;
+        public virtual DbSet<User> Users { get; set; } = default!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

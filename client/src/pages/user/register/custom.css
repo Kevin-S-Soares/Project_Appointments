@@ -1,0 +1,6 @@
+.nav-tabs>li.active.right>a,
+.nav-tabs>li.active.right>a:focus,
+.nav-tabs>li.active.right>a:hover {
+    border-right: 0 !important;
+    border-top: 0 !important;
+}

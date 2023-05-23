@@ -1,16 +1,15 @@
 import React from "react";
+import "./custom.css";
 
 export function Page(props) {
     return (
         <div className="col-md-offset-4 col-md-4">
             <br />
             <div className="panel panel-default">
-                <div className="nav-center">
-                    <ul className="nav nav-tabs nav-justified" role="tablist">
-                        <li role="presentation"><a href="/User/Login">Log in</a></li>
-                        <li role="presentation" className="active"><a href="/User/Register">Register</a></li>
-                    </ul>
-                </div>
+                <ul className="nav nav-tabs nav-justified" role="tablist">
+                    <li role="presentation"><a href="/User/Login">Log in</a></li>
+                    <li role="presentation" className="active right"><a href="/User/Register">Register</a></li>
+                </ul>
                 <form className="panel-body">
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
@@ -35,9 +34,9 @@ export function Page(props) {
     );
 }
 
-function incorrectEmail(props){
-    if(!props.isEmailValid){
-        return(
+function incorrectEmail(props) {
+    if (!props.isEmailValid) {
+        return (
             <p className="text-danger">Email is incorrect!</p>
         );
     }
@@ -46,36 +45,35 @@ function incorrectEmail(props){
     );
 }
 
-function passwordIsWeak(props){
-    if(!props.isPasswordValid)
-    {
-        return(
+function passwordIsWeak(props) {
+    if (!props.isPasswordValid) {
+        return (
             <p className="text-danger">Password must contain at least one letter, one number and one special character!</p>
         );
     }
-    return(
+    return (
         <></>
     );
 }
 
-function passwordsDoNotMatch(props){
-    if(!props.isConfirmPasswordValid){
-        return(
+function passwordsDoNotMatch(props) {
+    if (!props.isConfirmPasswordValid) {
+        return (
             <p className="text-danger">Passwords do not match!</p>
         );
     }
-    return(
+    return (
         <></>
     );
 }
 
-function errorMessage(props){
-    if(props.message !== null){
-        return(
+function errorMessage(props) {
+    if (props.message !== null) {
+        return (
             <p className="text-danger">{props.message}!</p>
         );
     }
-    return(
+    return (
         <></>
     )
 }
