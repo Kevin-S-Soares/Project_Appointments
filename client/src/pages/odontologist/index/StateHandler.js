@@ -1,6 +1,7 @@
 import React from "react";
 import { CookieHandler } from "../../../cookies/CookieHandler";
 import { Page } from "./Page";
+import { AuthenticationHandler } from "../../../tools/AuthenticationHandler"
 
 export class StateHandler extends React.Component {
     constructor(props) {
@@ -12,6 +13,10 @@ export class StateHandler extends React.Component {
     }
 
     render() {
+        if(!AuthenticationHandler.IsLogged()){
+            window.location = window.location.origin;
+            return;
+        }
         return (
             <Page 
             data={this.state.data} 
@@ -21,6 +26,10 @@ export class StateHandler extends React.Component {
     }
 
     componentDidMount() {
+        if(!AuthenticationHandler.IsLogged()){
+            window.location = window.location.origin;
+            return;
+        }
         const header = CookieHandler.GetAuthorizedHeader();
         const options = {
             method: 'GET',

@@ -36,14 +36,9 @@ function enterUser(props) {
     const url = window.location.origin;
     return (
         <ul className="nav navbar-nav navbar-right">
-            <li className="user">
-                <a href="/" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Enter<span className="caret"></span></a>
-                <ul className="dropdown-menu">
-                    <li><a href={url + "/User/Register"}>Register</a></li>
-                    <li><a href={url + "/User/Login"}>Log in</a></li>
-                </ul>
-            </li>
+            <li><a href={url + "/User/Login"}>Sign in / Sign up</a></li>
         </ul>
+        
     );
 }
 
