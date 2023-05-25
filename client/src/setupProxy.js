@@ -13,7 +13,7 @@ const context = [
 
 module.exports = function (app) {
     const appProxy = createProxyMiddleware(context, {
-        target: 'https://localhost:7156',
+        target: 'project-appointments.azurewebsites.net',
         secure: false
     });
 
