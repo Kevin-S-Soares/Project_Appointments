@@ -1,2 +1,2 @@
 /*    /index.html  200
-/api/*  https://project-appointments.azurewebsites.net/api/User/Login
+/api/*  https://project-appointments.azurewebsites.net/api/User/:splat 200
